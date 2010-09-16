@@ -1,0 +1,3 @@
+<language en>
+MCU board (actually, two boards: one for SRAM units, the other for everything else).  Has dsPIC33F chip, buffer for input from 4 microphones (actually, their pre-amplifiers), SD card interface, external trigger input, and host computer interface.
+</language en>

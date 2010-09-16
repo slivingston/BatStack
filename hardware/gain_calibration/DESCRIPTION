@@ -1,0 +1,3 @@
+<language en>
+The gain calibration circuit.  Goal is to emit a sequence of logarithm FM sweeps with which to calibrate array microphone channels.  At the end of the output sequence, a TTL trigger pulse is generated.
+</language en>

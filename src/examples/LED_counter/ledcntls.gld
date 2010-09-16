@@ -1,0 +1,12 @@
+/*
+INPUT(-ldsp)
+INPUT(-lm)
+INPUT(-lc)
+*/
+
+SEARCH_DIR("/opt/pic_C30/pic30-nonfree/lib")
+SEARCH_DIR("/opt/pic_C30/pic30-nonfree/lib/dsPIC33F")
+SEARCH_DIR("/opt/pic_C30/pic30-nonfree/support/dsPIC33F/gld")
+INPUT(-lpic30)
+INPUT(-lp33FJ128GP710)
+INCLUDE p33FJ128GP710.gld

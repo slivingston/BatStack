@@ -1,0 +1,20 @@
+--- pic30-nonfree/support/dsPIC33F/gld/p33FJ128GP710.gld.orig	2010-04-15 13:18:05.000000000 -0400
++++ pic30-nonfree/support/dsPIC33F/gld/p33FJ128GP710.gld	2010-03-08 16:06:13.000000000 -0500
+@@ -3,10 +3,15 @@
+ */
+ 
+ OUTPUT_ARCH("33FJ128GP710")
+-CRT0_STARTUP(crt0_standard.o)
++EXTERN(__resetPRI)
++EXTERN(__resetALT)
++/*CRT0_STARTUP(crt0_standard.o)
+ CRT1_STARTUP(crt1_standard.o)
++*/
++
+ 
+-OPTIONAL(-lp33FJ128GP710)
++/*OPTIONAL(-lp33FJ128GP710)
++*/
+ 
+ /*
+ ** Memory Regions

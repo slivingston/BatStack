@@ -1,0 +1,14 @@
+/*
+ * gain cal linker script
+ *
+ * Scott Livingston  <slivingston@caltech.edu>
+ * May 2010
+ *
+ */
+
+SEARCH_DIR("/home/scott/opt/pic30/pic30-nonfree/lib")
+SEARCH_DIR("/home/scott/opt/pic30/pic30-nonfree/lib/PIC24H")
+SEARCH_DIR("/home/scott/opt/pic30/pic30-nonfree/support/PIC24H/gld")
+INPUT(-lpic30)
+INPUT(-lp24HJ12GP201)
+INCLUDE p24HJ12GP201.gld

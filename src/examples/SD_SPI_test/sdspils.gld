@@ -1,0 +1,10 @@
+/*
+INPUT(-ldsp)
+INPUT(-lm)
+INPUT(-lc)
+*/
+
+SEARCH_DIR("C:\Program Files\Microchip\MPLAB C30\lib")
+SEARCH_DIR("C:\Program Files\Microchip\MPLAB C30\support\dsPIC33F\gld")
+INPUT(-lpic30)
+INCLUDE p33FJ128GP710.gld
