@@ -14,7 +14,7 @@
  * Partial hardware notes:
  *   - MCU/DSC:    dsPIC33FJ128GP710
  *   - Oscillator: XT 10.000MHz
- *   - Compiler:   MPLAB C30; Microchip v3.23
+ *   - Compiler:   MPLAB C30; Microchip v3.23b
  *
  * NOTES: - Design notes:
  *           - long (int) variables are stored in little endian on the
