@@ -120,6 +120,7 @@ if __name__ == "__main__": # Called as stand-alone?
         plt.subplot(4,num_cols,1+ind, sharex=ax1)
         plt.plot(t, x[ind])
         plt.xlim([t[0], t[-1]])
+        plt.grid()
     plt.show()
 
 #(Pxx, freqs, bins, im) = specgram( x[ind][intv[0]:intv[1]], NFFT=128, Fs=1/Ts, noverlap=120 )
