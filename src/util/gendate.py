@@ -21,6 +21,8 @@ Apr, Sep 2010.
 import sys
 from datetime import date
 
+import batstack
+
 if len(sys.argv) == 4:
     try:
         year  = int(sys.argv[1])
@@ -31,18 +33,14 @@ if len(sys.argv) == 4:
     except ValueError:
         print "Invalid arguments given."
         exit(1)
+    result = batstack.gendate_explicit(year, month, day)
+    print "0x%04X" % result
 elif len(sys.argv) == 1:
-    d = date.today()
-    day = d.day
-    month = d.month
-    year = d.year
-    print "Using today (i.e. %02d/%02d/%04d)" % (day, month, year)
+    print "Using today (i.e. %s)" % str(date.today())
+    result = batstack.gendate()
+    print "0x%04X" % result
 else:
     print "Usage: %s [$year $month $day]" % sys.argv[0]
     exit(0)
 
-result = day&0x1F
-result |= (month&0xF) << 5
-result |= ((year-1970)&0x7F) << 9
 
-print "0x%04X" % result
