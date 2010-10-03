@@ -520,6 +520,64 @@ On error, returns -1.
         return data_str
 
 
+# This will hopefully be a legacy routine soon, as far as the user
+# is concerned. It provides the ability to read raw files dumped
+# (using the dumpsd utility) from SD cards used by individual
+# Stacks.
+def raw_arr_read( bname, bs_id, trial_num ):
+    """Read raw wideband array data file, of form *_*_trial*.bin
+
+On success, returns length len(bs_id) list, where each element has
+data in an ndarray (i.e. the type by NumPy) for that channel for that
+BatStack; note that ordering matches that of given bs_id list.
+
+Otherwise (i.e., on error), returns an empty list.
+"""
+    trial_len = 1**20 # Length (in words) per channel per trial
+    x = []
+    num_chans = 0
+    for bid in bs_id:
+        fname = bname + '_' + str(bid).zfill(2) + '_trial' + str(trial_num[num_chans/4]).zfill(2) + '.bin'
+        result = np.fromfile(fname, dtype='uint16')
+        for k in range(4):
+            x.append(result[range(k, len(result), 4)])
+        num_chans += 4
+        continue
+    return x
+
+def find_intv( t, t_min, t_max ):
+    """Binary search for indices in given time array.
+
+On success, returns a two element list corresponding to indices in t.
+On failure, returns empty.
+"""
+    win_min  = len(t)/2
+    last_ind = None
+    step_size = len(t)/4
+    while win_min != last_ind:
+        last_ind = win_min
+        if t[win_min] < t_min:
+            win_min += step_size
+        elif t[win_min] > t_min:
+            win_min -= step_size
+        else:
+            break
+        step_size /= 2
+    win_max  = len(t)/2
+    last_ind = None
+    step_size = len(t)/4
+    while win_max != last_ind:
+        last_ind = win_max
+        if t[win_max] < t_max:
+            win_max += step_size
+        elif t[win_max] > t_max:
+            win_max -= step_size
+        else:
+            break
+        step_size /= 2
+    return [win_min, win_max]
+
+
 # For use at the command-line,
 if __name__ == "__main__":
     print 'Reading...'
