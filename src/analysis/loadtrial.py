@@ -1,9 +1,9 @@
 #!/usr/bin/env PYTHONPATH=$PYTHONPATH:../util python
 """
-Load and display raw BatStack array data.
+Load and display Array data file, or raw SD-card-dumped disparate dumps.
 
-..."raw" in the sense that it is not in the standard file container
-for Array data as described in the technical manual.
+...the latter is "raw" in the sense that it is not in the standard
+file container for Array data as described in the technical manual.
 
 Internal notes: There are some internal constants that should either
 be dynamically determined from the given data or set by the User.
@@ -26,30 +26,37 @@ import batstack
 
 Ts = 3.75e-6
 
-if ('-h' in sys.argv) or len(sys.argv) < 4 or not (len(sys.argv)%2 == 0 or (len(sys.argv) >= 7 and sys.argv[-3] == '-t')):
-    print 'Usage: %s $basename ($addr $trial)^? [-t $t_start $t_stop]' % sys.argv[0]
+if ('-h' in sys.argv) or (len(sys.argv) != 2 and len(sys.argv) < 4) or not (len(sys.argv)%2 == 0 or (len(sys.argv) >= 7 and sys.argv[-3] == '-t')):
+    print 'Usage: %s $Array-data-file\nUsage: %s $basename ($addr $trial)^? [-t $t_start $t_stop]' % (sys.argv[0], sys.argv[0])
     exit(1)
-bname = sys.argv[1]
-bs_id = []
-trial_num = []
-len_argv = len(sys.argv)
-if len_argv%2 == 1: # Extract desired time range?
-    t_win = [float(sys.argv[-2]), float(sys.argv[-1])]
-    len_argv -= 3
+
+# Handle case of reading an Array data file (rather than disparate SD-card-dumped shit).
+if len(sys.argv) == 2:
+    bsaf = batstack.BSArrayFile(sys.argv[1])
+    bsaf.printparams()
+    if len(bsaf.data) < 1:
+        print 'Error reading Array data file (or its empty).'
+        exit(-1)
+    x = bsaf.export_chandata()
+    t_win = []
 else:
-    t_win = [] # Empty indicates use all available
-for k in range(2, len_argv, 2): # Read Stack IDs and trial numbers
-    bs_id.append( int(sys.argv[k]) )
-    trial_num.append( int(sys.argv[k+1]) )
+    bname = sys.argv[1]
+    bs_id = []
+    trial_num = []
+    len_argv = len(sys.argv)
+    if len_argv%2 == 1: # Extract desired time range?
+        t_win = [float(sys.argv[-2]), float(sys.argv[-1])]
+        len_argv -= 3
+    else:
+        t_win = [] # Empty indicates use all available
+    for k in range(2, len_argv, 2): # Read Stack IDs and trial numbers
+        bs_id.append( int(sys.argv[k]) )
+        trial_num.append( int(sys.argv[k+1]) )
 
-x = batstack.raw_arr_read(bname, bs_id, trial_num)
-if len(x) == 0:
-    print 'Error occurred while loading trial data.'
-    exit(-1)
-
-    #for k in range(len(x)): # Remove mean
-    #    xk_mean = np.mean(x[k])
-    #    x[k] = [j-xk_mean for j in x[k]]
+    x = batstack.raw_arr_read(bname, bs_id, trial_num)
+    if len(x) == 0:
+        print 'Error occurred while loading trial data.'
+        exit(-1)
     
 t = [k*Ts for k in range(-len(x[0])+1,1)]
     
@@ -68,5 +75,3 @@ for ind in range(len(x)):
     plt.xlim([t[0], t[-1]])
     plt.grid()
 plt.show()
-
-#(Pxx, freqs, bins, im) = specgram( x[ind][intv[0]:intv[1]], NFFT=128, Fs=1/Ts, noverlap=120 )

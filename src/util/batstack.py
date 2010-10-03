@@ -155,6 +155,8 @@ NumPy terminology).
 
     def printparams(self):
         """Print parameters in a clean display to stdout.
+
+Returns nothing.
 """
         print 'version: %d' % self.version
         print 'recording date: ' + str(self.recording_date)
@@ -168,6 +170,25 @@ NumPy terminology).
         else:
             print 'data dictionary is empty.'
         return
+
+    def export_chandata(self):
+        """Creates list of channel data, for use outside this object.
+
+Returns list of self.num_mics ndarrays (dtype=uint16), using array
+from data attribute of this object if available, otherwise creating a
+zero array. Note that the list is ordered, i.e. the first element
+corresponds to global mic channel 1, the second to channel 2, etc.
+"""
+        if len(self.data) < 1:
+            return []
+        chan_len = len(self.data.values()[0])
+        x = []
+        for k in range(1, self.num_mics+1):
+            if k in self.data.keys():
+                x.append(self.data[k].copy())
+            else:
+                x.append(np.zeros(shape=(chan_len,1), dtype='uint16'))
+        return x
 
     def readfile(self, fname):
         """Read Array data file (conformant to specs).
@@ -511,7 +532,7 @@ On error, returns -1.
         
         # Verify that length of trials in data is equal.
         # If not, abort.
-        chan_len = len(data[data.keys()[0]])
+        chan_len = len(data.values()[0])
         for v in data.values():
             if len(v) != chan_len:
                 return -1

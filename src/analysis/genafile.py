@@ -104,13 +104,24 @@ if __name__ == '__main__':
         bs_id.append( int(sys.argv[k]) )
         trial_num.append( int(sys.argv[k+1]) )
 
+    # Read channel map file
+    chanmap = batstack.read_chanmap(chanmap_fname)
+    if len(chanmap) < 1:
+        print 'Error: absent or empty channel map file, ' + chanmap_fname
+        exit(-1)
+
     # Read in disparate channel data
+    print 'Reading trial data...'
     x = batstack.raw_arr_read(bname, bs_id, trial_num)
     if len(x) == 0:
         print 'Error occurred while loading trial data.'
         exit(-1)
 
     # Instantiate and populate BSArrayFile
+    #
+    # N.B., we manipulate relevant (internal) attributes of this
+    # BSArrayFile object.  This is poor practice but a decent solution
+    # for now.  Perhaps some accessor-style methods would be better?
     bsaf = batstack.BSArrayFile(param_fname=params_fname)
     if num_mics is not None:
         bsaf.num_mics = num_mics
@@ -120,5 +131,16 @@ if __name__ == '__main__':
         bsaf.notes = notes
     if d is not None:
         bsaf.recording_date = d
-    
+
+    for (k, v) in chanmap.items():
+        try:
+            bs_addr_ind = bs_id.index(k)
+        except ValueError:
+            print 'Warning: could not find data for Stack addr 0x%02X' % k
+            continue
+        for local_ind in range(len(v)):
+            bsaf.data[v[local_ind]] = x[bs_addr_ind*4+local_ind] # Need to copy() here?
+
     bsaf.printparams() # Helpful for debugging.
+    print 'Writing result...'
+    bsaf.writefile('test.bin')
