@@ -2,7 +2,8 @@
 """
 A collection of handy stuff for the BatStack project.
 
-Largely unsorted, but each function should have a decent docstring.
+Largely unsorted, but each class or function should have a decent
+docstring.
 
 
 Scott Livingston  <slivingston@caltech.edu>
@@ -70,6 +71,11 @@ assume automatic and begin with Stack of first row having address
 Note that, in manual mode, we assume addresses are given in
 hexadecimal format; e.g., 0x0a is read as 10 (base 10). The '0x'
 prefix is optional.
+
+We assume any local channels that map to global number zero are
+not implemented, e.g. ``0x13 20 4 0 2'' would cause Stack with
+address 0x13 to have channels 1, 2, and 4 map to global channels
+20, 4, and 2, respectively, with local channel 3 not implemented.
 
 Returns a dictionary with keys corresponding to Stack addresses
 and values being lists (of length 4, always) where index in list
