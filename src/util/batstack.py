@@ -241,10 +241,9 @@ method. (i.e. failures are ``clean'').
             print 'Error while reading channel data.'
             f.close()
             return False
+        self.version = version
         if version == 1:
-            self.version = 2 # Upgrade
-        else:
-            self.version = version
+            print 'File uses version 1; please consider upgrading.'
         self.recording_date = recording_date
         self.trial_number = trial_number
         self.num_mics = num_mics
