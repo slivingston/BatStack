@@ -38,7 +38,7 @@ if len_argv%2 == 1: # Extract desired time range?
     len_argv -= 3
 else:
     t_win = [] # Empty indicates use all available
-for k in range(2,len_argv,2): # Read Stack IDs and trial numbers
+for k in range(2, len_argv, 2): # Read Stack IDs and trial numbers
     bs_id.append( int(sys.argv[k]) )
     trial_num.append( int(sys.argv[k+1]) )
 

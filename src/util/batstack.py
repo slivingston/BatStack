@@ -143,7 +143,7 @@ NumPy terminology).
         self.trial_number = 0
         self.num_mics = 0
         self.sample_period = np.array([3.75e-6])
-        self.post_trigger_samps = 0
+        self.post_trigger_len = 0
         self.notes = ''
         self.data = dict()
 
@@ -152,6 +152,22 @@ NumPy terminology).
             self.readfile(fname)
         elif param_fname is not None:
             self.parse_paramfile(param_fname)
+
+    def printparams(self):
+        """Print parameters in a clean display to stdout.
+"""
+        print 'version: %d' % self.version
+        print 'recording date: ' + str(self.recording_date)
+        print 'trial number: %d' % self.trial_number
+        print 'number microphones: %d' % self.num_mics
+        print 'sample period: ' + str(self.sample_period[0]*1e6) + ' us'
+        print 'number of post-trigger blocks: %d' % self.post_trigger_len
+        print 'notes: ' + self.notes
+        if len(self.data) > 0:
+            print 'channels with nonzero data: ' + str(self.data.keys())
+        else:
+            print 'data dictionary is empty.'
+        return
 
     def readfile(self, fname):
         """Read Array data file (conformant to specs).
@@ -187,7 +203,7 @@ method. (i.e. failures are ``clean'').
         trial_number = hdr_tup[1]
         num_mics = hdr_tup[2]
         sample_period = np.array([hdr_tup[3]*1e-8])
-        post_trigger_samps = hdr_tup[4]
+        post_trigger_len = hdr_tup[4]
         try:
             notes = f.read(128)
         except:
@@ -212,7 +228,7 @@ method. (i.e. failures are ``clean'').
         self.trial_number = trial_number
         self.num_mics = num_mics
         self.sample_period = sample_period.copy()
-        self.post_trigger_samps = post_trigger_samps
+        self.post_trigger_len = post_trigger_len
         self.notes = notes
         self.data = data
         f.close()
@@ -330,7 +346,7 @@ Returns True on success; False on failure.
                               self.trial_number,
                               self.num_mics,
                               int(self.sample_period[0]*1e8), # Convert to 10 ns units
-                              self.post_trigger_samps)
+                              self.post_trigger_len)
         if len(self.notes) > 128:
             notes = self.notes[:128]
         else:
@@ -373,7 +389,7 @@ Returns nothing.
         self.trial_number = another_bsArrayFile.trial_number
         self.num_mics = another_bsArrayFile.num_mics
         self.sample_period = another_bsArrayFile.sample_period.copy()
-        self.post_trigger_samps = another_bsArrayFile.post_trigger_samps
+        self.post_trigger_len = another_bsArrayFile.post_trigger_len
         self.notes = another_bsArrayFile.notes
         return
 
@@ -396,17 +412,16 @@ Returns nothing.
         """Parse an Array data parameters/header notes file (plaintext).
 
 ...with which to populate the header of an Array data file format.
-The argument dumpsd_style indicates whether to handle a "params"
+The argument dumpsd_style indicates whether to handle a ``params''
 file as created by dumpsd (utility program for reading SD cards
-that have Stack data). This is not currently implemented.
+that have Stack data). This is currently NOT IMPLEMENTED.
 
 Instead, we use <field name>: <value>
 
 At most one <field name>: <value> should appear per line. Empty
 lines are ignored. <value> should be contained on a single
 line. Field names must match the names of corresponding members of
-this BSArrayFile class; indeed, this is done somewhat blindly
-using getattr, so be careful. In the case of the trial notes, the
+this BSArrayFile class. In the case of the trial notes, the
 string should be demarcated by double quotes, i.e. "
 
 On success, returns True (and this object's field are updated
@@ -422,6 +437,7 @@ accordingly); on failure, False.
             line_num += 1
             ind = line.find(':')
             if ind > -1:
+                print line[:ind] + '\n' + line[ind+1:]
                 if line[:ind] in dir(self):
                     if line[:ind] == 'version':
                         self.version = int(line[ind+1:])
@@ -429,13 +445,10 @@ accordingly); on failure, False.
                         self.trial_number = int(line[ind+1:])
                     elif line[:ind] == 'num_mics':
                         self.num_mics = int(line[ind+1:])
-                    elif line[:ind] == 'post_trigger_samps':
-                        self.post_trigger_samps = int(line[ind+1:])
+                    elif line[:ind] == 'post_trigger_len':
+                        self.post_trigger_len = int(line[ind+1:])
                     elif line[:ind] == 'notes':
                         self.notes = line[ind+1:] # This could be a security hole?
-                    #if  line[:ind] in ['version', 'trial_number', 'num_mics',
-                    #                   'post_trigger_samps']: # treat Int casts
-                    #    getattr(self, line[:ind]) = int(line[ind+1:])
                     elif line[:ind] == 'sample_period': # treat ndarray (NumPy)
                         self.sample_period = np.fromstring(line[ind+1:], dtype=np.float64, sep=', ')
                     elif line[:ind] == 'recording_date': # treat datestring
