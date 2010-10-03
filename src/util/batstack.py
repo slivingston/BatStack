@@ -552,7 +552,6 @@ BatStack; note that ordering matches that of given bs_id list.
 
 Otherwise (i.e., on error), returns an empty list.
 """
-    trial_len = 1**20 # Length (in words) per channel per trial
     x = []
     num_chans = 0
     for bid in bs_id:
