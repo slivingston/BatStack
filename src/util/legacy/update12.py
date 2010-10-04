@@ -1,4 +1,4 @@
-#!/usr/bin/env PYTHONPATH=$PYTHONPATH:.. python
+#!/usr/bin/env python
 """
 Update an Array data file from version 1 to version 2.
 

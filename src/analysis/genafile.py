@@ -1,4 +1,4 @@
-#!/usr/bin/env PYTHONPATH=$PYTHONPATH:../util python
+#!/usr/bin/env python
 """
 Generate an array data file, conforming to standard format.
 

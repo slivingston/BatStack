@@ -1,4 +1,4 @@
-#!/usr/bin/env PYTHONPATH=$PYTHONPATH:../util python
+#!/usr/bin/env python
 """
 Load and display Array data file, or raw SD-card-dumped disparate dumps.
 

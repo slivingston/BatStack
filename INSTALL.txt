@@ -1,0 +1,41 @@
+== Installation Notes for the BatStack project ==
+
+Scott Livingston  <slivingston@caltech.edu>
+
+(See README.txt for copyright and license information.)
+
+
+This INSTALL file will be filled in eventually, likely after the
+complete reference manual for the Project is written.  I am working on
+this actively but cannot yet commit to a delivery date.  For now,
+unsorted installation notes are collected below.  These are due to me
+hacking around with the system or from suggestions from others.
+
+Many components of the system --primarily those that are
+host-computer-related-- are written in Python and depend on the
+batstack module, which is located under src/util.  In most cases, you
+will need to add this directory to the search path of your Python
+installation.  The easiest solution (which I prefer, for now), is to
+add the full path to src/util to the variable PYTHONPATH in your shell
+environment.  For example, if you had placed the BatStack source under
+
+/home/frodo/research/Batlab/BatStack
+
+Then to append to PYTHONPATH in your current shell session,
+
+$ export PYTHONPATH=$PYTHONPATH:/home/frodo/research/Batlab/BatStack/src/util
+
+For this to occur for every session (or if you are working in a
+GUI/desktop environment), then you need to add the above line (or one
+like it) to your shell startup script, or system variables, etc.
+E.g., if you use zsh, add the above line to .zshrc in your home
+directory, i.e.
+
+$ echo 'export PYTHONPATH=$PYTHONPATH:/home/frodo/research/Batlab/BatStack/src/util' >> ~/.zshrc
+
+Test whether you successfully added src/util to your Python search
+path by trying to access the batstack module documentation, which you
+should read anyway,
+
+$ pydoc batstack
+
