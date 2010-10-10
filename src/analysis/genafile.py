@@ -143,4 +143,6 @@ if __name__ == '__main__':
 
     bsaf.printparams() # Helpful for debugging.
     print 'Writing result...'
-    bsaf.writefile('test.bin')
+    out_fname = str(bsaf.recording_date.year).zfill(4) + str(bsaf.recording_date.month).zfill(2) + str(bsaf.recording_date.day).zfill(2) + '_trial' + str(bsaf.trial_number).zfill(2) + '.bin'
+    if bsaf.writefile(out_fname) == False:
+        print 'Error occurred while trying to write %s' % out_fname
