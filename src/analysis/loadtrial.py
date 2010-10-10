@@ -5,6 +5,9 @@ Load and display Array data file, or raw SD-card-dumped disparate dumps.
 ...the latter is "raw" in the sense that it is not in the standard
 file container for Array data as described in the technical manual.
 
+Use the command-line flag -l to get a figure with an informative title
+(at the possible cost of screen real estate).
+
 Internal notes: There are some internal constants that should either
 be dynamically determined from the given data or set by the User.
 
@@ -16,6 +19,7 @@ Jun, Sep-Oct 2010.
 
 import sys
 import math
+from os import getcwd
 
 import numpy as np
 import matplotlib as mpl
@@ -26,12 +30,22 @@ import batstack
 
 Ts = 3.75e-6
 
+# Before everything, look for and extract -l argument
+try:
+    ind = sys.argv.index('-l')
+    verbose_title = True
+    sys.argv.pop(ind) # Pull it out
+except ValueError:
+    verbose_title = False
+
+# Now usual command-line argument processing
 if ('-h' in sys.argv) or (len(sys.argv) != 2 and len(sys.argv) < 4) or not (len(sys.argv)%2 == 0 or (len(sys.argv) >= 7 and sys.argv[-3] == '-t')):
-    print 'Usage: %s $Array-data-file\nUsage: %s $basename ($addr $trial)^? [-t $t_start $t_stop]' % (sys.argv[0], sys.argv[0])
+    print 'Usage: %s $Array-data-file\nUsage: %s $basename ($addr $trial)^? [-t $t_start $t_stop] [-l]' % (sys.argv[0], sys.argv[0])
     exit(1)
 
 # Handle case of reading an Array data file (rather than disparate SD-card-dumped shit).
 if len(sys.argv) == 2:
+    using_Arr_datafile = True # To help with verbose_title
     bsaf = batstack.BSArrayFile(sys.argv[1])
     bsaf.printparams()
     if len(bsaf.data) < 1:
@@ -40,6 +54,7 @@ if len(sys.argv) == 2:
     x = bsaf.export_chandata()
     t_win = []
 else:
+    using_Arr_datafile = False # To help with verbose_title
     bname = sys.argv[1]
     bs_id = []
     trial_num = []
@@ -70,8 +85,19 @@ if len(t_win) == 2:
 num_cols = int(math.ceil(len(x)/4.))
 ax1 = plt.subplot(4,num_cols,1)
 for ind in range(len(x)):
-    plt.subplot(4,num_cols,1+ind, sharex=ax1)
+    ax = plt.subplot(4,num_cols,1+ind, sharex=ax1)
+    for label in ax.xaxis.get_ticklabels():
+        label.set_fontsize(8)
+    for label in ax.yaxis.get_ticklabels():
+        label.set_fontsize(8)
     plt.plot(t, x[ind])
     plt.xlim([t[0], t[-1]])
     plt.grid()
+    if verbose_title:
+        if using_Arr_datafile:
+            plt.title('ch '+str(ind), fontsize=10)
+        else:
+            plt.title(str(bs_id[ind/4])+':'+str((ind%4)+1)+' (trial '+str(trial_num[ind/4])+')', fontsize=10)
+if verbose_title:
+    plt.suptitle(getcwd() + ' \n' + ' '.join(sys.argv[1:]))
 plt.show()
