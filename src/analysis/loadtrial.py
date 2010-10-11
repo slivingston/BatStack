@@ -95,7 +95,7 @@ for ind in range(len(x)):
     plt.grid()
     if verbose_title:
         if using_Arr_datafile:
-            plt.title('ch '+str(ind), fontsize=10)
+            plt.title('ch '+str(ind+1), fontsize=10)
         else:
             plt.title(str(bs_id[ind/4])+':'+str((ind%4)+1)+' (trial '+str(trial_num[ind/4])+')', fontsize=10)
 if verbose_title:
