@@ -19,7 +19,7 @@ General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program -- in particular, in the file GPLv3.txt,
 located at the root of the BatStack repository.  If not, see
-<http://www.gnu.org/licenses/>.
+http://www.gnu.org/licenses/
 
 
 Please note that this project is in a PRE-ALPHA state!  It is under
