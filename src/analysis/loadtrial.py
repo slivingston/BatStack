@@ -104,7 +104,7 @@ for ind in range(len(x)):
     else:
         plt.plot(t, x[ind])
     plt.xlim([t[0], t[-1]])
-    #plt.grid()
+    plt.grid()
     if verbose_title:
         if using_Arr_datafile:
             plt.title('ch '+str(ind+1), fontsize=10)
