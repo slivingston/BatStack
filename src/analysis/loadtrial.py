@@ -30,17 +30,23 @@ import batstack
 
 Ts = 3.75e-6
 
-# Before everything, look for and extract -l argument
+# Before everything, look for and extract -l and -s arguments
 try:
     ind = sys.argv.index('-l')
     verbose_title = True
     sys.argv.pop(ind) # Pull it out
 except ValueError:
     verbose_title = False
+try:
+    ind = sys.argv.index('-s')
+    mk_specgram = True
+    sys.argv.pop(ind) # Pull it out
+except ValueError:
+    mk_specgram = False
 
 # Now usual command-line argument processing
 if ('-h' in sys.argv) or (len(sys.argv) != 2 and len(sys.argv) < 4) or not (len(sys.argv)%2 == 0 or (len(sys.argv) >= 7 and sys.argv[-3] == '-t')):
-    print 'Usage: %s $Array-data-file\nUsage: %s $basename ($addr $trial)^? [-t $t_start $t_stop] [-l]' % (sys.argv[0], sys.argv[0])
+    print 'Usage: %s $Array-data-file [-l] [-s]\nUsage: %s $basename ($addr $trial)^? [-t $t_start $t_stop] [-l] [-s]' % (sys.argv[0], sys.argv[0])
     exit(1)
 
 # Handle case of reading an Array data file (rather than disparate SD-card-dumped shit).
@@ -90,14 +96,20 @@ for ind in range(len(x)):
         label.set_fontsize(8)
     for label in ax.yaxis.get_ticklabels():
         label.set_fontsize(8)
-    plt.plot(t, x[ind])
+    if mk_specgram:
+        plt.specgram(x[ind]-np.mean(x[ind]), xextent=(t[0], t[-1]),
+                     NFFT=128,
+                     noverlap=120,
+                     Fs=1./Ts)
+    else:
+        plt.plot(t, x[ind])
     plt.xlim([t[0], t[-1]])
-    plt.grid()
+    #plt.grid()
     if verbose_title:
         if using_Arr_datafile:
             plt.title('ch '+str(ind+1), fontsize=10)
         else:
             plt.title(str(bs_id[ind/4])+':'+str((ind%4)+1)+' (trial '+str(trial_num[ind/4])+')', fontsize=10)
 if verbose_title:
-    plt.suptitle(getcwd() + ' \n' + ' '.join(sys.argv[1:]))
+    plt.suptitle(getcwd() + ' \n' + ' '.join(sys.argv[1:]) + '  (Subplot color axes are not equally scaled!)')
 plt.show()
