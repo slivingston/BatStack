@@ -111,5 +111,8 @@ for ind in range(len(x)):
         else:
             plt.title(str(bs_id[ind/4])+':'+str((ind%4)+1)+' (trial '+str(trial_num[ind/4])+')', fontsize=10)
 if verbose_title:
-    plt.suptitle(getcwd() + ' \n' + ' '.join(sys.argv[1:]) + '  (Subplot color axes are not equally scaled!)')
+    if mk_specgram:
+        plt.suptitle(getcwd() + ' \n' + ' '.join(sys.argv[1:]) + '  (Subplot color axes are not equally scaled!)')
+    else:
+        plt.suptitle(getcwd() + ' \n' + ' '.join(sys.argv[1:]))
 plt.show()
