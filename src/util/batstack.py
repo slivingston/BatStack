@@ -153,6 +153,11 @@ NumPy terminology).
         elif param_fname is not None:
             self.parse_paramfile(param_fname)
 
+    def getnz(self):
+        """Return list of nonzero channels.
+"""
+        return self.data.keys()
+
     def printparams(self):
         """Print parameters in a clean display to stdout.
 
