@@ -45,12 +45,13 @@ except ValueError:
     mk_specgram = False
 
 # Now usual command-line argument processing
-if ('-h' in sys.argv) or (len(sys.argv) != 2 and len(sys.argv) < 4) or not (len(sys.argv)%2 == 0 or (len(sys.argv) >= 7 and sys.argv[-3] == '-t')):
+if '-h' in sys.argv:
+#or (len(sys.argv) != 2 and len(sys.argv) < 4) or not (len(sys.argv)%2 == 0 or (len(sys.argv) >= 7 and sys.argv[-3] == '-t')):
     print 'Usage: %s $Array-data-file [-l] [-s]\nUsage: %s $basename ($addr $trial)^? [-t $t_start $t_stop] [-l] [-s]' % (sys.argv[0], sys.argv[0])
     exit(1)
 
 # Handle case of reading an Array data file (rather than disparate SD-card-dumped shit).
-if len(sys.argv) == 2:
+if len(sys.argv) == 2 or (len(sys.argv) == 5 and '.bin' in sys.argv[1]):
     using_Arr_datafile = True # To help with verbose_title
     bsaf = batstack.BSArrayFile(sys.argv[1])
     bsaf.printparams()
@@ -58,7 +59,18 @@ if len(sys.argv) == 2:
         print 'Error reading Array data file (or its empty).'
         exit(-1)
     x = bsaf.export_chandata()
-    t_win = []
+    
+    try:
+        ind = sys.argv.index('-t')
+        if len(sys.argv)-ind > 2:
+            t_win = [float(sys.argv[ind+1]), float(sys.argv[ind+2])]
+        else:
+            print 'Invalid time spec.'
+            exit(-1)
+    except ValueError:
+        t_win = []
+
+    nz_chans = bsaf.getnz() # Distinguish nonzero channels.
 else:
     using_Arr_datafile = False # To help with verbose_title
     bname = sys.argv[1]
@@ -78,6 +90,7 @@ else:
     if len(x) == 0:
         print 'Error occurred while loading trial data.'
         exit(-1)
+    nz_chans = range(len(x)+1)[1:]
     
 t = [k*Ts for k in range(-len(x[0])+1,1)]
     
@@ -97,14 +110,18 @@ for ind in range(len(x)):
     for label in ax.yaxis.get_ticklabels():
         label.set_fontsize(8)
     if mk_specgram:
-        plt.specgram(x[ind]-np.mean(x[ind]), xextent=(t[0], t[-1]),
-                     NFFT=128,
-                     noverlap=120,
-                     Fs=1./Ts)
+        if ind+1 in nz_chans:
+            plt.specgram(x[ind]-np.mean(x[ind]), xextent=(t[0], t[-1]),
+                         NFFT=128,
+                         noverlap=120,
+                         Fs=1./Ts)
     else:
         plt.plot(t, x[ind])
     plt.xlim([t[0], t[-1]])
-    plt.grid()
+    if mk_specgram and ind+1 not in nz_chans:
+        pass
+    else:
+        plt.grid()
     if verbose_title:
         if using_Arr_datafile:
             plt.title('ch '+str(ind+1), fontsize=10)
