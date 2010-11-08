@@ -88,7 +88,7 @@ RADIANCE_GLOBAL.plot_type = 0; % 0 --> time waveform
                                % 2 --> FFT magnitude plot
 RADIANCE_GLOBAL.detail_chan = nan; % no channel selected yet for detail view
 RADIANCE_GLOBAL.detail_stime = nan;
-RADIANCE_GLOBAL.detail_twin = .002; % s, time window width
+RADIANCE_GLOBAL.detail_twin = .050; % s, time window width
 RADIANCE_GLOBAL.current_popped_chan = nan;
 RADIANCE_GLOBAL.current_voc = 1;
 RADIANCE_GLOBAL.beam_lo_freq = 28e3; % Hz
@@ -279,7 +279,7 @@ RADIANCE_GLOBAL.local_times = bat2arrtime( RADIANCE_GLOBAL.current_time ); % Red
 RADIANCE_GLOBAL.plot_type = 0; % return to time waveform
 RADIANCE_GLOBAL.detail_chan = 1;
 RADIANCE_GLOBAL.detail_stime = RADIANCE_GLOBAL.local_times(RADIANCE_GLOBAL.detail_chan);
-RADIANCE_GLOBAL.detail_twin = .002; % in seconds
+RADIANCE_GLOBAL.detail_twin = .050; % in seconds
 RADIANCE_GLOBAL.current_chan_group = 1;
 RADIANCE_GLOBAL.current_popped_chan = nan;
 RADIANCE_GLOBAL.current_voc = 1;
@@ -1245,6 +1245,7 @@ function [error_code] = save_radmat_file( fname )
 error_code = 0;
 global RADIANCE_GLOBAL;
 radiance_analysed = struct;
+radiance_analysed.version = 1; % There is only one version, for now...
 radiance_analysed.timestamp = RADIANCE_GLOBAL.timestamp;
 radiance_analysed.bat_ID = RADIANCE_GLOBAL.bat_ID;
 radiance_analysed.owner = ''; % currently unused
