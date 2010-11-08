@@ -25,7 +25,7 @@ function [F, t, Ts, params] = loadafile( fname )
 %
 %
 % Scott Livingston  <slivingston@caltech.edu>
-% June 2010.
+% June,Nov 2010.
 
 
 % Run-time config (not accessible as function argument)
@@ -53,11 +53,14 @@ end
 params.ver_num = fread(fd,1,'uint8');
 fprintf( 'Reading file %s, detected version %d...\n', fname, params.ver_num );
 
-% At the time of writing, there is only one file format version, so we do
-% not use any conditional switching here. Future editions will need to add
-% such version-specific routines.
-%
-% Version 1
+if params.ver_num ~= 1 && params.ver_num ~= 2
+    fprintf( 'Error: unsupported file spec version. Aborting.' );
+    return
+end
+
+% N.B., Versions 1 and 2 differ only in how channel data is stored in
+% the array data file. Hence we only concern ourselves with it when
+% actual measurements are read in below.
 
 % Date
 rec_date_raw = fread(fd, 2, 'uint8');
@@ -94,37 +97,27 @@ notes_raw = fread(fd, 128, 'char' );
 params.notes = char( [notes_raw(1:max(find(notes_raw ~= 0)))]' );
 
 % Read the actual data
-% F = zeros(BUFFER_SIZE, params.num_channels);
-% rows_written = 0;
-% while ~feof(fd)
-    
-%     if rem(size(F,1),BUFFER_SIZE) && rows_written > 0 % Time to grow F buffer?
-%         tmp_F = F;
-%         F = zeros(size(tmp_F,1)+BUFFER_SIZE, params.num_channels);
-%         F(1:size(tmp_F,1),:) = tmp_F;
-%         clear tmp_F;
-%     end
-%     
-%     for k = 1:params.num_channels
-%         tmp_dat = fread(fd, 2, 'uint8' );
-%         F(rows_written+1,k) = tmp_dat(1) + bitshift(tmp_dat(2),8);
-%     end
-%     
-%     rows_written = rows_written + 1;    
-% end
-% fclose(fd);
-% 
-% if size(F,1) > rows_written % Trim unused rows
-%     F = F(1:rows_written,:);
-% end
+if params.ver_num == 1
 
-% We hope that the native machine is little-endian; otherwise, doing this
-% by hand (a la splitting each sample into two separate bytes) requires an
-% ungodly amount of time in Matlab.
-F = fread(fd, 'uint16' );
-fclose(fd);
-F = reshape( F, params.num_channels, floor(length(F)/params.num_channels) );
-F = F';
+    % We hope that the native machine is little-endian; otherwise, doing this
+    % by hand (a la splitting each sample into two separate bytes) requires an
+    % ungodly amount of time in Matlab.
+    F = fread(fd, 'uint16' );
+    fclose(fd);
+    F = reshape( F, params.num_channels, floor(length(F)/params.num_channels) );
+    F = F';
+
+else % Version 2
+
+    raw_F = fread(fd, 'uint16' );
+    chan_length = floor(length(raw_F)/params.num_channels);
+    fclose(fd);
+    F = nan( chan_length, params.num_channels );
+    for k = 1:params.num_channels
+        F(:,k) = raw_F( ((k-1)*chan_length+1):(k*chan_length) );
+    end
+
+end
 
 % Finally, construct time vector
 t = (1:size(F,1))*Ts;
