@@ -1306,7 +1306,7 @@ start_voc = BEAMVIZ_GLOBAL.current_voc;
 stop_voc = BEAMVIZ_GLOBAL.num_vocs;
 
 if stop_voc-start_voc > 10 % Try to be helpful.
-    ButtonName=questdlg( sprintf('%d trials need to be buffered. Continue?',stop_voc-start_voc+1), ...
+    ButtonName=questdlg( sprintf('%d vocalizations need to be buffered. Continue?',stop_voc-start_voc+1), ...
                          'Play vocalization sequences', 'Yes', 'No', 'No' );
     if ~strcmpi(ButtonName,'Yes')
         set(BEAMVIZ_GLOBAL.handles.voc_play_button,'Value',0);
