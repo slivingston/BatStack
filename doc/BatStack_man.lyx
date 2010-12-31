@@ -835,7 +835,7 @@ reference "misctools:sec"
  (see Section 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "radiance:sec"
+reference "radiance:sec-1"
 
 \end_inset
 
@@ -1148,9 +1148,9 @@ reference "setup:sec"
 ) measurements, the investigator can then begin marking vocalizations in
  Radiance (cf.
  Section 
-\begin_inset CommandInset label
-LatexCommand label
-name "radiance:sec"
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "radiance:sec"
 
 \end_inset
 
@@ -1661,7 +1661,7 @@ Electret microphones are essentially capacitors with a permanent charge
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -6186,7 +6186,7 @@ YYYYMMDD.wagaincal.mat
 \end_layout
 
 \begin_layout Section
-Radiance: an analysis tool
+Radiance: a data processing and analysis tool
 \end_layout
 
 \begin_layout Standard
@@ -6200,11 +6200,144 @@ name "radiance:sec"
 \end_layout
 
 \begin_layout Standard
-Imagine a hybrid of Sunshine and Batgadget on methylphenidate; hence, Radiance.
+
+\series bold
+N.B.,
+\series default
+ Radiance currently depends on MATLAB
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+it is being ported to NumPy, matplotlib, and wxWidgets, and some others.
+ Stay tuned!
+\end_layout
+
+\end_inset
+
+, and has most thoroughly been tested on Matlab R2009b on Mac OS X; the
+ second most tested platform is Matlab 2007b on Windows XP.
+\end_layout
+
+\begin_layout Standard
+The original design goal of Radiance is to create a method to reliably mark
+ vocalization start and stop times across the microphone array.
+ Array data is special (compared to single microphone recordings) because
+ we must not only mark vocalization times on each microphone channel but
+ also specify which markings correspond to the same original call by the
+ bat.
+ In other words and more verbosely, vocalizations emitted from the bat during
+ flight will arrive at recording points in the array at different times
+ due to differences in the distance between the bat and each particular
+ microphone (which indeed changes over the course of a trial as the bat
+ moves).
+\end_layout
+
+\begin_layout Subsection
+Basic usage and operation
+\end_layout
+
+\begin_layout Standard
+Taking inspiration from the BatGadget (Amaya Perez and many contributors?)
+ and Sunshine (Kaushik Ghose and many contributors?) tools developed in
+ the Bat Lab at U.
+\begin_inset space ~
+\end_inset
+
+Maryland, College Park, the current edition is based on marking the fundamental
+ sweep of bat vocalizations.
+ In brief, one sets the "global" vocalization number and then proceeds to
+ mark the corresponding call on each channel for which this is possible.
+ Marking consists of selecting the range of channels to display (in muliples
+ of 16, using drop-down menu in upper-right corner), navigating to a reasonable
+ time segment (possibly changing the window length (in ms) to capture more
+ or less signal in one view), and clicking the appropriate number button
+ under "Zoom-and-mark".
+ This will cause a pop-up window to appear showing a spectrogram of the
+ time segment of the selected channel in which the user (you) may select
+ start and stop points of the fundamental.
+\end_layout
+
+\begin_layout Standard
+This procedure is repeated for all vocalizations of a trial, and the result
+ is saved into a file described in Sec.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "radfile:sec"
+
+\end_inset
+
+ below.
+\end_layout
+
+\begin_layout Standard
+Confer Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "radiance:fig"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "radiance:fig"
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figures/radiance_screenshot.png
+	width 5in
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+screenshot of Radiance data processing; notice Channels 1 - 4 were empty.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
 Radiance results file
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "radfile:sec"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -6476,6 +6609,89 @@ not-a-number
 \end_inset
 
  without fault.
+\end_layout
+
+\begin_layout Section
+beamviz: multifarious sonar beam visualization
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+N.B.,
+\series default
+ beamviz currently depends on MATLAB
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+it is being ported to NumPy, matplotlib, and wxWidgets, and some others.
+ Stay tuned!
+\end_layout
+
+\end_inset
+
+, and has most thoroughly been tested on Matlab R2009b on Mac OS X; the
+ second most tested platform is Matlab 2007b on Windows XP.
+\end_layout
+
+\begin_layout Standard
+Confer Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "beamviz:fig"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "beamviz:fig"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figures/beamviz_screenshot.png
+	width 6in
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+screenshot of beamviz.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -7229,7 +7445,7 @@ Bill of materials
 
 \begin_layout Standard
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
