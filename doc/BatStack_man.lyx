@@ -54,6 +54,7 @@
 \tracking_changes false
 \output_changes false
 \author "" 
+\author "" 
 \end_header
 
 \begin_body
@@ -69,7 +70,7 @@ BatStack
 \begin_layout Author
 Scott Livingston
 \begin_inset Foot
-status open
+status collapsed
 
 \begin_layout Plain Layout
 Email by slivingston@caltech.edu
@@ -87,7 +88,7 @@ Last updated:
 \size default
  
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -229,7 +230,7 @@ status collapsed
 placement h
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
  
@@ -409,10 +410,7 @@ root
 \begin_layout Plain Layout
 
 \family typewriter
-\begin_inset Quotes ald
-\end_inset
-
- 
+>>
 \family default
  
 \end_layout
@@ -852,7 +850,7 @@ beamviz
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -1663,7 +1661,7 @@ Electret microphones are essentially capacitors with a permanent charge
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -1752,7 +1750,7 @@ name "oldpreamp:fig"
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -2307,7 +2305,7 @@ trigger input.
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -2403,7 +2401,7 @@ name "oldmcu:fig"
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -2476,7 +2474,7 @@ name "oldmem:fig"
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -4517,7 +4515,7 @@ main
 
  is located in the BatStack sourcetree at 
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -4588,7 +4586,7 @@ end{verbatim}
  good hint using 
 \begin_inset listings
 inline false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -4652,7 +4650,7 @@ bin2hex
 Now, to build the firmware, 
 \begin_inset listings
 inline false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -6661,7 +6659,7 @@ mA.
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -6743,7 +6741,7 @@ name "ampbrd2:fig"
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -6856,7 +6854,7 @@ reference "icsp_hdr:tbl"
 placement h
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
  
@@ -7037,7 +7035,7 @@ PGC
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -7165,7 +7163,7 @@ on.
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -7333,10 +7331,9 @@ http://octopart.com/
 placement h
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
- 
 \begin_inset Caption
 
 \begin_layout Plain Layout
@@ -8267,10 +8264,9 @@ LED (green)
 placement h
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
- 
 \begin_inset Caption
 
 \begin_layout Plain Layout
@@ -8304,7 +8300,7 @@ centering
 
  
 \begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="4">
+<lyxtabular version="3" rows="3" columns="4">
 <features>
 <column alignment="left" valignment="top" width="0">
 <column alignment="left" valignment="top" width="0">
@@ -8393,87 +8389,6 @@ DPAK
 
 \begin_layout Plain Layout
 MC33269DT-3.3GOS-ND
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-74LVT125DB (quad buffer; 3-state) 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-14-SSOP 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="right" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\SpecialChar \ldots{}
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-16
-\begin_inset space ~
-\end_inset
-
-Mbit Static RAM 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-48-TSOP 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="right" valignment="top" topline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-CY62167DV30LL-55ZXI
 \end_layout
 
 \end_inset
@@ -8608,6 +8523,31 @@ custom_expresspcb directory of custom symbols and footprints for ExpressPCB
 \end_layout
 
 \begin_layout Subsubsection
+SRAM board
+\end_layout
+
+\begin_layout Standard
+The old SRAM board is being redesigned.
+ The noteworthy components on it are
+\end_layout
+
+\begin_layout Itemize
+CY62167DV30LL-55ZXI 1Mx16 SRAM, 48-TSOP
+\end_layout
+
+\begin_layout Itemize
+74LVT125DB-T, 3.3V Quad buffer, 14SSOP
+\end_layout
+
+\begin_layout Itemize
+74LVT126DB-T, 3.3V Quad buffer, 14SSOP
+\end_layout
+
+\begin_layout Itemize
+4608X-1-103LF-ND 10k resistor array (8 SIP), (digikey)
+\end_layout
+
+\begin_layout Subsubsection
 MCU board
 \end_layout
 
@@ -8636,7 +8576,8 @@ status collapsed
 \end_layout
 
 \begin_layout Standard
-The ICSP port on older boards is in a non-standard configuration.
+The power supply connector is type PJ-202A.
+ The ICSP port on older boards is in a non-standard configuration.
  From left to right, the pins are 
 \end_layout
 
@@ -8760,7 +8701,7 @@ MOSI
 placement h
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
  
@@ -9140,7 +9081,7 @@ underline{3.3V regulator}
 
 \end_inset
 
- -- (upper-left of figure, next to external power jack) MC33269DT-3.3 , provides
+ -- (upper-left of figure, next to external power jack) MC33DT-3.3 , provides
  3.3
 \begin_inset space ~
 \end_inset
@@ -10775,7 +10716,7 @@ If you do not see the program that interests you mentioned below, then try
  looking toward the top of the source code file for documentation.
  For Octave/Matlab scripts, 
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -10847,7 +10788,7 @@ batstack
  From the command-line, try something like 
 \begin_inset listings
 inline false
-status open
+status collapsed
 
 \begin_layout Description
 
@@ -10932,7 +10873,7 @@ reference "bulkmemorg:sec"
  E.g., if I run it now on my laptop, (copy-and-pasted from my terminal) 
 \begin_inset listings
 inline false
-status open
+status collapsed
 
 \begin_layout Description
 
@@ -10964,7 +10905,7 @@ YYYY MM DD
  E.g., for February 12, 2009, (again, copy-and-pasted) 
 \begin_inset listings
 inline false
-status open
+status collapsed
 
 \begin_layout Description
 
@@ -11297,7 +11238,7 @@ unconnected
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -11359,7 +11300,7 @@ name "oldmcu_layout:fig"
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
