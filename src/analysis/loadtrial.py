@@ -13,7 +13,7 @@ be dynamically determined from the given data or set by the User.
 
 
 Scott Livingston  <slivingston@caltech.edu>
-Jun, Sep-Oct 2010.
+Jun, Sep-Oct 2010; Jan 2011.
 """
 
 
@@ -46,13 +46,12 @@ except ValueError:
 
 # Now usual command-line argument processing
 if '-h' in sys.argv or len(sys.argv) == 1:
-#or (len(sys.argv) != 2 and len(sys.argv) < 4) or not (len(sys.argv)%2 == 0 or (len(sys.argv) >= 7 and sys.argv[-3] == '-t')):
     ind = sys.argv[0].rfind('/')
     if ind != -1:
         progname = sys.argv[0][ind+1:]
     else:
         progname = sys.argv[0]
-    print 'Usage: %s $Array-data-file [-l] [-s]\nUsage: %s $basename ($addr $trial)^? [-t $t_start $t_stop] [-l] [-s]' % (progname, progname)
+    print 'Usage: %s $Array-data-file [-l] [-s] [-t $t_start $t_stop]\nUsage: %s $basename ($addr $trial)^? [-t $t_start $t_stop] [-l] [-s]' % (progname, progname)
     exit(1)
 
 # Handle case of reading an Array data file (rather than disparate SD-card-dumped shit).
