@@ -40,7 +40,11 @@ parser.add_option("-s", action="store_true", dest="mk_specgram", default=False,
 parser.add_option("-t", nargs=2, metavar="t0 T", dest="t_win", default=None,
                   help="read time window of t0 to T; (default is entire trial)")
 parser.add_option("-f", metavar="FILE", dest="bsaf_filename", default=None)
-parser.add_option("-r", metavar="BASENAME ADDR0 TRIAL0 ADDR1 TRIAL1 ...", dest="raw_trial_list", default=None)
+parser.add_option("-r", metavar="BASENAME,ADDR0,TRIAL0,ADDR1,TRIAL1,...", dest="raw_trial_list", default=None)
+parser.add_option("-c", metavar="CH0,CH1,...", dest="chan_list", default=None,
+                  help="only display specified channels")
+parser.add_option("-n", "--no-zero", action="store_true", dest="hide_zero_channels", default=False,
+                  help="hide zero channels (i.e. those without data)")
 
 (options, args) = parser.parse_args()
 if options.bsaf_filename and options.raw_trial_list:
@@ -60,6 +64,22 @@ if options.t_win is not None:
         t_win = []
 else:
     t_win = []
+    
+# Convert channel list to integers and check syntax
+if options.chan_list is not None:
+    chan_list = []
+    print options.chan_list.split(',')
+    for k in options.chan_list.split(','):
+        try:
+            chan_list.append(int(k))
+        except ValueError:
+            print "Bad channel number: %s" % k
+            exit(-1)
+        if chan_list[-1] < 1:
+            print "Bad channel number (not positive): %s" % k
+            exit(-1)
+else:
+    chan_list = [] # empty indicates ALL channels
 
 # Handle case of reading an Array data file (rather than disparate SD-card-dumped shit).
 if options.bsaf_filename:
@@ -73,7 +93,7 @@ if options.bsaf_filename:
     nz_chans = bsaf.getnz() # Distinguish nonzero channels.
 else: # Legacy
     using_Arr_datafile = False # To help with verbose_title
-    raw_trial_list = options.raw_trial_list.split()
+    raw_trial_list = options.raw_trial_list.split(',')
     bname = raw_trial_list[0]
     bs_id = []
     trial_num = []
@@ -86,6 +106,39 @@ else: # Legacy
         print 'Error occurred while loading trial data.'
         exit(-1)
     nz_chans = range(len(x)+1)[1:]
+
+# Remove any 
+    
+# Trim away unwanted channels, if any, and handle labeling
+# This routine is INEFFICIENT but decent for now.
+if len(chan_list) > 0:
+    chan_list.sort()
+    for ind in range(len(chan_list)):
+        if chan_list[ind] > len(x):
+            print "Warning: requested channel outside range (%d): %d" % (len(x), chan_list[ind])
+            del chan_list[ind:]
+            break
+    x_trimmed = []
+    for k in chan_list:
+        x_trimmed.append(x[k-1])
+    x = x_trimmed
+else: # Default to all available channels.
+    chan_list = range(1,len(x)+1)
+    
+# If requested, trim zero channels, i.e. those without data
+if options.hide_zero_channels:
+    x_trimmed = []
+    chan_list_trimmed = []
+    for k in nz_chans:
+        if k in chan_list:
+            ind = chan_list.index(k)
+            x_trimmed.append(x[ind])
+            chan_list_trimmed.append(k)
+    x = x_trimmed
+    chan_list = chan_list_trimmed
+    if len(chan_list) == 0:
+        print "No channels to display."
+        exit(0)
     
 t = [k*Ts for k in range(-len(x[0])+1,1)]
     
@@ -97,15 +150,16 @@ if len(t_win) == 2:
             x[k] = x[k][win_ind[0]:(win_ind[1]+1)]
 
 num_cols = int(math.ceil(len(x)/4.))
-ax1 = plt.subplot(4,num_cols,1)
+num_rows = len(x)/num_cols
+ax1 = plt.subplot(num_rows,num_cols,1)
 for ind in range(len(x)):
-    ax = plt.subplot(4,num_cols,1+ind, sharex=ax1)
+    ax = plt.subplot(num_rows,num_cols,1+ind, sharex=ax1)
     for label in ax.xaxis.get_ticklabels():
         label.set_fontsize(8)
     for label in ax.yaxis.get_ticklabels():
         label.set_fontsize(8)
     if options.mk_specgram:
-        if ind+1 in nz_chans:
+        if chan_list[ind] in nz_chans:
             plt.specgram(x[ind]-np.mean(x[ind]), xextent=(t[0], t[-1]),
                          NFFT=128,
                          noverlap=120,
@@ -113,13 +167,13 @@ for ind in range(len(x)):
     else:
         plt.plot(t, x[ind])
     plt.xlim([t[0], t[-1]])
-    if options.mk_specgram and ind+1 not in nz_chans:
+    if options.mk_specgram and chan_list[ind] not in nz_chans:
         pass
     else:
         plt.grid()
     if options.verbose_title:
         if using_Arr_datafile:
-            plt.title('ch '+str(ind+1), fontsize=10)
+            plt.title('ch '+str(chan_list[ind]), fontsize=10)
         else:
             plt.title(str(bs_id[ind/4])+':'+str((ind%4)+1)+' (trial '+str(trial_num[ind/4])+')', fontsize=10)
 if options.verbose_title:
