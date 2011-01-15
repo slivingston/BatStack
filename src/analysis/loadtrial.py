@@ -17,6 +17,7 @@ Jun, Sep-Oct 2010; Jan 2011.
 """
 
 
+from optparse import OptionParser # Deprecated since Python v2.7, but for folks using 2.5 or 2.6...
 import sys
 import math
 from os import getcwd
@@ -28,67 +29,57 @@ import matplotlib.pyplot as plt
 import batstack
 
 
+# Globals to-be-made-internal-or-parametric at some point
 Ts = 3.75e-6
 
-# Before everything, look for and extract -l and -s arguments
-try:
-    ind = sys.argv.index('-l')
-    verbose_title = True
-    sys.argv.pop(ind) # Pull it out
-except ValueError:
-    verbose_title = False
-try:
-    ind = sys.argv.index('-s')
-    mk_specgram = True
-    sys.argv.pop(ind) # Pull it out
-except ValueError:
-    mk_specgram = False
+parser = OptionParser()
+parser.add_option("-l", action="store_true", dest="verbose_title", default=False,
+                  help="verbose title and plot labeling")
+parser.add_option("-s", action="store_true", dest="mk_specgram", default=False,
+                  help="print spectrogram (rather than the default, time waveform)")
+parser.add_option("-t", nargs=2, metavar="t0 T", dest="t_win", default=None,
+                  help="read time window of t0 to T; (default is entire trial)")
+parser.add_option("-f", metavar="FILE", dest="bsaf_filename", default=None)
+parser.add_option("-r", metavar="BASENAME ADDR0 TRIAL0 ADDR1 TRIAL1 ...", dest="raw_trial_list", default=None)
 
-# Now usual command-line argument processing
-if '-h' in sys.argv or len(sys.argv) == 1:
-    ind = sys.argv[0].rfind('/')
-    if ind != -1:
-        progname = sys.argv[0][ind+1:]
-    else:
-        progname = sys.argv[0]
-    print 'Usage: %s $Array-data-file [-l] [-s] [-t $t_start $t_stop]\nUsage: %s $basename ($addr $trial)^? [-t $t_start $t_stop] [-l] [-s]' % (progname, progname)
-    exit(1)
+(options, args) = parser.parse_args()
+if options.bsaf_filename and options.raw_trial_list:
+    parser.error("either specify an Array data file to read,\nor (legacy) a basename and list of address,trial pairs.")
+if not options.bsaf_filename and not options.raw_trial_list:
+    parser.error("a data source must be provided (try -f or -r options...).")
+
+# Convert time window to float, if given
+if options.t_win is not None:
+    try:
+        t_win = [float(options.t_win[0]), float(options.t_win[1])]
+        if t_win[1] < t_win[0]:
+            print "Warning: given time range invalid; using whole trial."
+            t_win = []
+    except ValueError:
+        print "Warning: given time range invalid; using whole trial."
+        t_win = []
+else:
+    t_win = []
 
 # Handle case of reading an Array data file (rather than disparate SD-card-dumped shit).
-if len(sys.argv) == 2 or (len(sys.argv) == 5 and '.bin' in sys.argv[1]):
+if options.bsaf_filename:
     using_Arr_datafile = True # To help with verbose_title
-    bsaf = batstack.BSArrayFile(sys.argv[1])
+    bsaf = batstack.BSArrayFile(options.bsaf_filename)
     bsaf.printparams()
     if len(bsaf.data) < 1:
         print 'Error reading Array data file (or its empty).'
         exit(-1)
     x = bsaf.export_chandata()
-    
-    try:
-        ind = sys.argv.index('-t')
-        if len(sys.argv)-ind > 2:
-            t_win = [float(sys.argv[ind+1]), float(sys.argv[ind+2])]
-        else:
-            print 'Invalid time spec.'
-            exit(-1)
-    except ValueError:
-        t_win = []
-
     nz_chans = bsaf.getnz() # Distinguish nonzero channels.
-else:
+else: # Legacy
     using_Arr_datafile = False # To help with verbose_title
-    bname = sys.argv[1]
+    raw_trial_list = options.raw_trial_list.split()
+    bname = raw_trial_list[0]
     bs_id = []
     trial_num = []
-    len_argv = len(sys.argv)
-    if len_argv%2 == 1: # Extract desired time range?
-        t_win = [float(sys.argv[-2]), float(sys.argv[-1])]
-        len_argv -= 3
-    else:
-        t_win = [] # Empty indicates use all available
-    for k in range(2, len_argv, 2): # Read Stack IDs and trial numbers
-        bs_id.append( int(sys.argv[k]) )
-        trial_num.append( int(sys.argv[k+1]) )
+    for k in range(1, len(raw_trial_list), 2): # Read Stack IDs and trial numbers
+        bs_id.append( int(raw_trial_list[k]) )
+        trial_num.append( int(raw_trial_list[k+1]) )
 
     x = batstack.raw_arr_read(bname, bs_id, trial_num)
     if len(x) == 0:
@@ -113,7 +104,7 @@ for ind in range(len(x)):
         label.set_fontsize(8)
     for label in ax.yaxis.get_ticklabels():
         label.set_fontsize(8)
-    if mk_specgram:
+    if options.mk_specgram:
         if ind+1 in nz_chans:
             plt.specgram(x[ind]-np.mean(x[ind]), xextent=(t[0], t[-1]),
                          NFFT=128,
@@ -122,17 +113,17 @@ for ind in range(len(x)):
     else:
         plt.plot(t, x[ind])
     plt.xlim([t[0], t[-1]])
-    if mk_specgram and ind+1 not in nz_chans:
+    if options.mk_specgram and ind+1 not in nz_chans:
         pass
     else:
         plt.grid()
-    if verbose_title:
+    if options.verbose_title:
         if using_Arr_datafile:
             plt.title('ch '+str(ind+1), fontsize=10)
         else:
             plt.title(str(bs_id[ind/4])+':'+str((ind%4)+1)+' (trial '+str(trial_num[ind/4])+')', fontsize=10)
-if verbose_title:
-    if mk_specgram:
+if options.verbose_title:
+    if options.mk_specgram:
         plt.suptitle(getcwd() + ' \n' + ' '.join(sys.argv[1:]) + '  (Subplot color axes are not equally scaled!)')
     else:
         plt.suptitle(getcwd() + ' \n' + ' '.join(sys.argv[1:]))
