@@ -68,7 +68,6 @@ else:
 # Convert channel list to integers and check syntax
 if options.chan_list is not None:
     chan_list = []
-    print options.chan_list.split(',')
     for k in options.chan_list.split(','):
         try:
             chan_list.append(int(k))
@@ -149,8 +148,9 @@ if len(t_win) == 2:
         for k in range(len(x)):
             x[k] = x[k][win_ind[0]:(win_ind[1]+1)]
 
-num_cols = int(math.ceil(len(x)/4.))
-num_rows = len(x)/num_cols
+num_cols = math.ceil(len(x)/4.)
+num_rows = int(math.ceil(len(x)/num_cols))
+num_cols = int(num_cols) # ...And now make num_cols type int.
 ax1 = plt.subplot(num_rows,num_cols,1)
 for ind in range(len(x)):
     ax = plt.subplot(num_rows,num_cols,1+ind, sharex=ax1)
