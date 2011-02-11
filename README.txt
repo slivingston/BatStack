@@ -1,7 +1,7 @@
 The Batlab Microphone Array Project, or "BatStack"
 
 Copyright (c) 2008-2010, the University of Maryland;
-Copyright (c) 2010, Scott C. Livingston
+Copyright (c) 2010-2011, Scott C. Livingston
 
 Email contact by slivingston@caltech.edu
 
