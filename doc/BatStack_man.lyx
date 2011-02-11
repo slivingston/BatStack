@@ -64,7 +64,11 @@ BatStack
 \begin_inset Newline newline
 \end_inset
 
- :: reference manual ::
+ :: reference manual (
+\emph on
+draft
+\emph default
+) ::
 \end_layout
 
 \begin_layout Author
@@ -1661,7 +1665,7 @@ Electret microphones are essentially capacitors with a permanent charge
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -2380,16 +2384,13 @@ this is a complete, populated board
 \end_inset
 
 
-\end_layout
-
-\begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
 name "oldmcu:fig"
 
 \end_inset
 
- 
+
 \end_layout
 
 \end_inset
@@ -4072,8 +4073,8 @@ Later, the purpose of gain calibration is precisely to account for differences
 \end_layout
 
 \begin_layout Standard
-We describe the first, small test, the steps for which are necessary for
- the more involved second (optional) test.
+We describe the first, small test, the steps which are necessary for the
+ more involved second (optional) test.
  On the right side of Fig.
 \begin_inset space ~
 \end_inset
@@ -4452,7 +4453,7 @@ unloaded
 \begin_inset Formula $\mu$
 \end_inset
 
-F capacitor followed by a 47
+F capacitor followed in parallel by a 47
 \begin_inset space ~
 \end_inset
 
@@ -4460,13 +4461,25 @@ k
 \begin_inset Formula $\Omega$
 \end_inset
 
- or so resistor in parallel to pull the offset to your desired level.
+ or so resistor to pull the offset to your desired level.
  Note also that I have not had trouble in this matter, while testing an
  unloaded amplifier output.
 \end_layout
 
 \begin_layout Subsubsection
 Firmware Installation
+\end_layout
+
+\begin_layout Standard
+
+\shape italic
+\begin_inset CommandInset label
+LatexCommand label
+name "firmwarebuild:sec"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4515,7 +4528,7 @@ main
 
  is located in the BatStack sourcetree at 
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -4524,11 +4537,10 @@ status collapsed
 begin{verbatim}
 \end_layout
 
-\end_inset
+\begin_layout Plain Layout
 
- src/firmware/main.c 
-\begin_inset ERT
-status collapsed
+src/firmware/main.c
+\end_layout
 
 \begin_layout Plain Layout
 
@@ -4539,7 +4551,7 @@ end{verbatim}
 
 \end_inset
 
- In the same directory (i.e.
+In the same directory (i.e.
  
 \family typewriter
 src/firmware
@@ -4558,7 +4570,7 @@ frodo
 \family default
 , then use something like 
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -4567,11 +4579,10 @@ status collapsed
 begin{verbatim}
 \end_layout
 
-\end_inset
+\begin_layout Plain Layout
 
- BASEDIR=/home/frodo/opt/picC30 
-\begin_inset ERT
-status collapsed
+BASEDIR=/home/frodo/opt/picC30
+\end_layout
 
 \begin_layout Plain Layout
 
@@ -4582,15 +4593,28 @@ end{verbatim}
 
 \end_inset
 
- If you are unsure where you installed the toolchain, then you can get a
- good hint using 
-\begin_inset listings
-inline false
-status collapsed
+If you are unsure where you installed the toolchain, then you can get a
+ good hint using
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
 
 \begin_layout Plain Layout
 
 $ which pic30-coff-gcc
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
 \end_layout
 
 \end_inset
@@ -4647,10 +4671,16 @@ bin2hex
 \end_layout
 
 \begin_layout Standard
-Now, to build the firmware, 
-\begin_inset listings
-inline false
-status collapsed
+Now, to build the firmware,
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
 
 \begin_layout Plain Layout
 
@@ -4667,9 +4697,16 @@ $ cd src/firmware
 $ make
 \end_layout
 
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
 \end_inset
 
- Whether you have success or failure at this point, please let me, Scott
+Whether you have success or failure at this point, please let me, Scott
  Livingston, know.
  I tend to only test platforms that I am actively working on, but am nonetheless
  interested in results from other contexts.
@@ -4868,7 +4905,7 @@ batstack.hex
 , must now be written to the target Stack, or rather, the on-board dsPIC33FJ128G
 P710 chip.
  I highly recommend using a GoodFET programmer (mentioned earlier) both
- because I have tested most thoroughly with it and it is open source.
+ because I have tested most thoroughly with it, and it is open source.
  Other programming methods may be used as long as it conforms to the ICSP
  requirements for the PIC24H/dsPIC33F family and properly attaches to the
  ICSP header (see Sec.
@@ -4921,6 +4958,16 @@ necessary
 
 \begin_layout Subsubsection
 Position calibration
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "positioncal:sec"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5115,7 +5162,9 @@ Being careful
 
  here basically constitutes only powering the speakers when you are about
  to or are actively using them.
- Be aware that some sources need a few seconds or more to build up the necessary
+ 
+\emph on
+Be aware that some sources need a few seconds or more to build up the necessary
  bias voltage.
 \end_layout
 
@@ -5134,33 +5183,12 @@ gain calibration
  however, the source must be reliable in the sense that we can with high
  confidence produce the same sound into each microphone.
  Under the assumption of an identical source (and, notably, assuming microphones
- are omnidirectional, i.e.
+ are approximately omnidirectional, i.e.
  we do not require exact 0 degree angle of incidence during recording),
  the differences in channel response profiles indicate how real, experimental
- recordings should be adjusted to make value across channels comparable.
+ recordings should be adjusted to make values across channels comparable.
  That is, by adjusting for differences in gain of the hardware, we can meaningfu
 lly compare sound intensity arriving across the microphone array.
-\end_layout
-
-\begin_layout Standard
-There are a variety of methods by which one may perform a gain calibration.
- The traditional manner is to setup the array as it will be used in the
- experiment,
-\end_layout
-
-\begin_layout Standard
-See Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "gaincal_schem:fig"
-
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Standard
@@ -5194,6 +5222,52 @@ reference "gaincalfile:sec"
 \end_inset
 
  for details on the file container for gain calibration data.
+ Most computation supporting gain calibration is contained in a few Octave
+ scripts under 
+\begin_inset Quotes eld
+\end_inset
+
+src/analysis/gain_calib
+\begin_inset Quotes erd
+\end_inset
+
+ in the BatStack sourcetree.
+ These facilitate automatic thresholding and extraction of FM sweeps from
+ raw array recording files, and production of an averaged frequency-magnitude
+ response.
+ Hence, yielding a gain calibration file for use in data analysis.
+\end_layout
+
+\begin_layout Standard
+You should not perform a gain calibration until your microphone positions,
+ and preferably channel labeling, too, are fixed (cf.
+ Sec.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "positioncal:sec"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+See Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "gaincal_schem:fig"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -5211,25 +5285,179 @@ name "config:sec"
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status collapsed
 
-\begin_layout Plain Layout
+\emph on
+Currently you must reprogram the firmware on each Stack to changes these
+ parameters.
+ See Sec.
+\begin_inset space ~
+\end_inset
 
-% Setting trigger mode, etc.
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "firmware:sec"
+
+\end_inset
+
+ for details.
+ See Sec.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "firmwarebuild:sec"
+
+\end_inset
+
+ for build instructions.
 \end_layout
 
+\begin_layout Standard
+Most configuration parameters are initialized by the firmware upon boot;
+ look for a section call 
+\begin_inset Quotes eld
+\end_inset
+
+Default values
+\begin_inset Quotes erd
+\end_inset
+
+ near the beginning of function 
+\family typewriter
+main
+\family default
+ in the file main.c (under src/firmware).
+ Of interest here are three of these:
+\end_layout
+
+\begin_layout Description
+batstack_id 8-bit address;
+\end_layout
+
+\begin_layout Description
+build_date date that firmward was built; not automatic; try using gendate.py
+ (cf.
+ Sec.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "misctools:sec"
+
+\end_inset
+
+);
+\end_layout
+
+\begin_layout Description
+posttrigger_len set trigger position (i.e., how much to record before vs.
+ after received external trigger signal).
+\end_layout
+
+\begin_layout Standard
+To support a configurable trigger time, (uint16) 
+\family typewriter
+posttrigger_len
+\family default
+ specifies the number of 256-sample blocks to record after the trigger.
+ Assuming 4
+\begin_inset space ~
+\end_inset
+
+Mwords of sample data, and 4 microphone channels (hence 1
+\begin_inset space ~
+\end_inset
+
+Mword or 1048576 samples per channel), there are therefore 4096 such blocks
+ of 256 samples each; note that a single block includes in total 1024 samples,
+ since there are 4 mic channels.
+\end_layout
+
+\begin_layout Standard
+For examples, 
+\family typewriter
+posttrigger_len
+\family default
+ :=
+\end_layout
+
+\begin_layout Itemize
+0 implies an end-trigger;
+\end_layout
+
+\begin_layout Itemize
+4096 implies a start-trigger; and
+\end_layout
+
+\begin_layout Itemize
+2048 implies middle trigger (i.e.
+ equal recording time before and after trigger press).
+\end_layout
+
+\begin_layout Standard
+Because this is often appropriate in experiments, the default trigger configurat
+ion is 
+\begin_inset Quotes eld
+\end_inset
+
+end-trigger
+\begin_inset Quotes erd
+\end_inset
+
+ (i.e., 
+\family typewriter
+posttrigger_len
+\family default
+
+\begin_inset space ~
+\end_inset
+
+:=
+\begin_inset space ~
+\end_inset
+
+0).
+\end_layout
+
+\begin_layout Subsection
+Experiment recordings
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+N.B.,
+\series default
+ because a simpler interface has not been written yet, the notes here pertain
+ to doing things manually.
+ Decent comfort at the UNIX command prompt (
+\begin_inset Quotes eld
+\end_inset
+
+terminal
+\begin_inset Quotes erd
+\end_inset
+
+) is assumed.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
 \begin_layout Plain Layout
 
+% [NOTES ON USE OF dumpsd and sdprep, ETC.]
 \end_layout
 
 \end_inset
 
 
-\end_layout
-
-\begin_layout Subsection
-Experiment recordings
 \end_layout
 
 \begin_layout Subsection
@@ -5297,7 +5525,24 @@ NN
 \end_layout
 
 \begin_layout Standard
-At the time of writing, two m-functions (tested in Matlab, not yet verified
+A handy tool for quickly viewing data files is 
+\family typewriter
+loadtrial.py
+\family default
+ (cf.
+ notes in Sec.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "misctools:sec"
+
+\end_inset
+
+).
+ At the time of writing, two m-functions (tested in Matlab, not yet verified
  in Octave) for reading and writing conformant data files are 
 \family typewriter
 loadafile.m
@@ -6171,7 +6416,7 @@ The naming convention is
 YYYYMMDD.wagaincal.mat
 \family default
 .
- Other items in the name indicate (most likely) non-standard storage container,
+ Other items in the name indicate (most likely) a different storage container,
  e.g.
  
 \family typewriter
@@ -6183,6 +6428,14 @@ YYYYMMDD.wagaincal.mat
 \family default
  reveal that the file was saved in MAT version 7 format or hierarchical
  data format (HDF5), respectively.
+
+\family typewriter
+\series bold
+ 
+\family default
+N.B., the system will eventually have all dependencies on MATLAB removed.
+ In particular, HDF5 will almost surely be the new standard data file container
+ in this project.
 \end_layout
 
 \begin_layout Section
@@ -6240,7 +6493,11 @@ Basic usage and operation
 \begin_layout Standard
 Taking inspiration from the BatGadget (Amaya Perez and many contributors?)
  and Sunshine (Kaushik Ghose and many contributors?) tools developed in
- the Bat Lab at U.
+ the Bat
+\begin_inset space ~
+\end_inset
+
+Lab at U.
 \begin_inset space ~
 \end_inset
 
@@ -6706,16 +6963,15 @@ name "hardware:sec"
 \end_inset
 
  
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-% Circuit schematics, board designs, explanations
 \end_layout
 
+\begin_layout Standard
+\begin_inset ERT
+status open
+
 \begin_layout Plain Layout
 
+% [Circuit schematics, board designs, explanations]
 \end_layout
 
 \end_inset
@@ -7415,8 +7671,8 @@ Gain calibration circuit
 \end_inset
 
 Gain calibration circuit.
- The odd X1 and X2 semi-circular symbols are supposed to indicate a BNC/coaxial
- cable socket, where cable shielding connects to ground.
+ The weird X1 and X2 semi-circular symbols are supposed to indicate a BNC/coaxia
+l cable socket, where cable shielding connects to ground.
 \end_layout
 
 \end_inset
@@ -7445,7 +7701,7 @@ Bill of materials
 
 \begin_layout Standard
 \begin_inset ERT
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -9710,7 +9966,13 @@ name "firmware:sec"
 \end_layout
 
 \begin_layout Standard
-[COMMENTS ABOUT IDIOSYNCRACIES WITH PIC C30 HEX CODING.]
+
+\series bold
+N.B.,
+\series default
+ the source code files are fairly well commented.
+ Until I get time to write up this section, please look directly in the
+ code files for design notes and reasoning.
 \end_layout
 
 \begin_layout Subsection
@@ -9718,8 +9980,8 @@ Organization
 \end_layout
 
 \begin_layout Standard
-Note that the SD card SPI interface code controls the slave select (SS;
- also called 
+The SD card SPI interface code controls the slave select (SS; also called
+ 
 \begin_inset Quotes eld
 \end_inset
 
@@ -9960,7 +10222,23 @@ BDATE
 \end_inset
 
  is year (in years since 1970, i.e.
- add 1970 to this value); 
+ add 1970 to this value); (cf.
+ 
+\family typewriter
+gendate.py
+\family default
+ tool in Sec.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "misctools:sec"
+
+\end_inset
+
+);
 \end_layout
 
 \begin_layout Itemize
@@ -10647,18 +10925,7 @@ status collapsed
 
 
 \backslash
-begin{verbatim}
-\end_layout
-
-\end_inset
-
- # apt-get install python 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
+begin{verbatim}# apt-get install python 
 \backslash
 end{verbatim}
 \end_layout
@@ -10941,15 +11208,10 @@ status collapsed
 begin{verbatim}
 \end_layout
 
-\end_inset
+\begin_layout Plain Layout
 
- 
-\begin_inset Quotes ald
-\end_inset
-
- help spicegirl 
-\begin_inset ERT
-status collapsed
+>> help spicegirl
+\end_layout
 
 \begin_layout Plain Layout
 
@@ -10995,30 +11257,91 @@ dumpsd
 \end_layout
 
 \begin_layout Description
-util/
+src/analysis/
+\family typewriter
+loadtrial.py
+\family default
+ View trial data in oscillogram or spectrogram formats.
+ It has a variety of options and serves primarily the purpose of quickly
+ examining trial data, finding interesting sections for further study, etc.,
+ without the need to start up a full analysis session (as might be done
+ in the Radiance application).
+ Further note that all accesses are in read-only mode (i.e., you cannot change
+ the data files with loadtrial.py).
+ Please see help notes available at the terminal, e.g.
+ with
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+$ cd src/analysis
+\end_layout
+
+\begin_layout Plain Layout
+
+$ ./loadtrial.py -h
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+ Lastly, loadtrial.py depends on batstack, so it won't work unless your python
+ search paths are setup correctly\SpecialChar \ldots{}
+ see next item.
+\end_layout
+
+\begin_layout Description
+src/util/
 \family typewriter
 batstack
 \family default
  (a Python module); Please see help documentation within the module for
  usage, details, etc.
- From the command-line, try something like 
-\begin_inset listings
-inline false
+ From the command-line, try something like
+\begin_inset ERT
 status collapsed
 
-\begin_layout Description
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
 
 $ cd src/util
 \end_layout
 
-\begin_layout Description
+\begin_layout Plain Layout
 
 $ pydoc batstack
 \end_layout
 
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
 \end_inset
 
- where I included 
+where I included 
 \begin_inset Quotes eld
 \end_inset
 
@@ -11056,7 +11379,7 @@ src/util/batstack.py
 \end_layout
 
 \begin_layout Description
-util/
+src/util/
 \family typewriter
 memcheck
 \family default
@@ -11067,7 +11390,7 @@ memcheck
 \end_layout
 
 \begin_layout Description
-util/
+src/util/
 \family typewriter
 gendate.py
 \family default
@@ -11087,24 +11410,37 @@ reference "bulkmemorg:sec"
  Running without arguments will use today as the date (as reported by the
  host operating system).
  E.g., if I run it now on my laptop, (copy-and-pasted from my terminal) 
-\begin_inset listings
-inline false
+\begin_inset ERT
 status collapsed
 
-\begin_layout Description
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
 
 $ ./gendate.py
 \end_layout
 
-\begin_layout Description
+\begin_layout Plain Layout
 
 Using today (i.e.
  26/09/2010)
 \end_layout
 
-\begin_layout Description
+\begin_layout Plain Layout
 
 0x513A
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
 \end_layout
 
 \end_inset
@@ -11119,18 +11455,31 @@ YYYY MM DD
 
 .
  E.g., for February 12, 2009, (again, copy-and-pasted) 
-\begin_inset listings
-inline false
+\begin_inset ERT
 status collapsed
 
-\begin_layout Description
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
 
 $ ./gendate.py 2009 2 12
 \end_layout
 
-\begin_layout Description
+\begin_layout Plain Layout
 
 0x4E4C
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
 \end_layout
 
 \end_inset
@@ -11139,7 +11488,7 @@ $ ./gendate.py 2009 2 12
 \end_layout
 
 \begin_layout Description
-util/legacy/
+src/util/legacy/
 \family typewriter
 update12.py
 \family default
@@ -11243,7 +11592,7 @@ highly
  I have tried a different brand of SD card (the name of which I cannot recall\SpecialChar \ldots{}
 
  it is white-ish and sold in the UMD STAMP Student Union bookstore), and
- it was horidly buggy and slow.
+ it was horridly buggy and slow.
  A possible reason for this is that some vendors deviate from the published
  SD over SPI protocol, which is precisely what I used while writing read/write
  routines for such memory.
@@ -11328,8 +11677,9 @@ pic30-coff
 \begin_inset Quotes erd
 \end_inset
 
-) can generate flawed assembly, which can lead to subtle stack alignment
- errors that later cause traps.
+) can generate flawed assembly for calls to functions that take mixed single
+ and double words, which can lead to subtle stack alignment errors that
+ later cause traps.
  The debugging lesson: in addition to the C code, do not be afraid to consider
  the assembly code.
  
@@ -11337,6 +11687,20 @@ pic30-coff
 objdump
 \family default
  is your friend.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+% [COMMENTS ABOUT IDIOSYNCRACIES WITH PIC C30 HEX CODING.]
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
