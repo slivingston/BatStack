@@ -176,6 +176,62 @@ Returns nothing.
             print 'data dictionary is empty.'
         return
 
+    def print_hdr(self, fname):
+        """Print file header/parameters in a clean display to stdout.
+
+This is a convenience routine for reading header/parameter data from
+an Array data file without actually loading Array data into memory;
+indeed, this BSArrayFile object is unaltered. (Use readfile method to
+actually load a file.)
+
+Returns True on success; False on failure.
+"""
+        try:
+            f = open(fname, 'rb')
+        except:
+            print 'Error: could not open %s for reading' % fname
+            return False
+        version = struct.unpack('b', f.read(1))[0] # Get version byte
+        if version not in self.known_versions:
+            print 'Error: unrecognized version spec: %d' % version
+            f.close()
+            return False
+        try:
+            hdr_tup = struct.unpack('<HbbHL', f.read(10))
+        except:
+            print 'Error while unpacking file header.'
+            f.close()
+            return False
+        recording_date = extdate(hdr_tup[0])
+        trial_number = hdr_tup[1]
+        num_mics = hdr_tup[2]
+        sample_period = np.array([hdr_tup[3]*1e-8])
+        post_trigger_len = hdr_tup[4]
+        try:
+            notes = f.read(128)
+        except:
+            print 'Error while reading notes string from file header.'
+            f.close()
+            return False
+        notes = notes.rstrip('\x00') # Trim trailing zeros
+        if num_mics < 1:
+            print 'Error: in header, bad number of mics: %d' % num_mics
+            f.close()
+            return False
+        if version == 1:
+            print 'File uses version 1; please consider upgrading.'
+
+        f.close()
+
+        print 'version: %d' % version
+        print 'recording date: ' + str(recording_date)
+        print 'trial number: %d' % trial_number
+        print 'number microphones: %d' % num_mics
+        print 'sample period: ' + str(sample_period[0]*1e6) + ' us'
+        print 'number of post-trigger blocks: %d' % post_trigger_len
+        print 'notes: ' + notes
+        return True
+
     def export_chandata(self):
         """Creates list of channel data, for use outside this object.
 
