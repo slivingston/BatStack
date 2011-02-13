@@ -237,7 +237,6 @@ sideways false
 status collapsed
 
 \begin_layout Plain Layout
- 
 \begin_inset Caption
 
 \begin_layout Plain Layout
@@ -791,7 +790,11 @@ reference "hardware:sec"
 \end_inset
 
  for details on hardware design, parts, etc.
- See Section 
+ See Section
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "firmware:sec"
@@ -836,10 +839,14 @@ reference "misctools:sec"
  reference, and mention of the program in this manual is limited to in-place
  description as needed.
  Data processing and analysis happen primarily through the application Radiance
- (see Section 
+ (see Section
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "radiance:sec-1"
+reference "radiance:sec"
 
 \end_inset
 
@@ -1098,7 +1105,7 @@ src/util/dumpsd
 \begin_inset Quotes erd
 \end_inset
 
- in the BatStack source tree.
+ in the BatStack sourcetree.
 \end_layout
 
 \end_inset
@@ -5106,6 +5113,16 @@ Gain calibration
 \end_layout
 
 \begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "gaincal:sec"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 
 \series bold
 Cautionary note.
@@ -5169,7 +5186,12 @@ Be aware that some sources need a few seconds or more to build up the necessary
 \end_layout
 
 \begin_layout Standard
-The goal of 
+
+\series bold
+Overview.
+
+\series default
+ The goal of 
 \begin_inset Quotes eld
 \end_inset
 
@@ -5268,6 +5290,788 @@ reference "gaincal_schem:fig"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Example.
+
+\series default
+ Suppose you have collected frequency sweeps using the gain cal tool (which
+ currently lacks decent documentation; for now peek at Sec.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "otherhardware:sec"
+
+\end_inset
+
+, or see Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "gaincal_schem:fig"
+
+\end_inset
+
+).
+ Assuming you dumped recording data directly from the SD
+\begin_inset space ~
+\end_inset
+
+card of each Stack in your rig, there should be one 
+\begin_inset Quotes eld
+\end_inset
+
+*.bin
+\begin_inset Quotes erd
+\end_inset
+
+ file for each microphone channel, preferably collected in a single directory.
+ In my case, sweeps were recorded on 26
+\begin_inset space ~
+\end_inset
+
+May 2010, hence my directory contains
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_01_params.txt
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_01_trial01.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_01_trial02.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_01_trial03.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_01_trial04.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_02_params.txt
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_02_trial01.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_02_trial02.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_02_trial03.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_02_trial04.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_03_params.txt
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_03_trial01.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_03_trial02.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_03_trial03.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_03_trial04.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_04_params.txt
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_04_trial01.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_04_trial02.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_04_trial03.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+20100526_04_trial04.bin
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+Such files are obtained using the (quite low-level) program 
+\family typewriter
+dumpsd
+\family default
+, located under 
+\begin_inset Quotes eld
+\end_inset
+
+src/util/dumpsd
+\begin_inset Quotes erd
+\end_inset
+
+ in the BatStack sourcetree.
+ Note that I am calibration 16 channels, hence 16 binary files.
+\end_layout
+
+\begin_layout Standard
+A calibration is obtained by processing these recordings with several Octave
+ scripts
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+they should run as-is in MATLAB as well.
+ If you like, replace 
+\begin_inset Quotes eld
+\end_inset
+
+Octave
+\begin_inset Quotes erd
+\end_inset
+
+ with 
+\begin_inset Quotes eld
+\end_inset
+
+MATLAB
+\begin_inset Quotes erd
+\end_inset
+
+ in this example.
+\end_layout
+
+\end_inset
+
+, all of which are under 
+\begin_inset Quotes eld
+\end_inset
+
+src/analysis
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+src/analysis/gain_calib
+\begin_inset Quotes erd
+\end_inset
+
+ of the BatStack sourcetree.
+ To setup your Octave path for these directories, if it is not already,
+ try the script 
+\family typewriter
+setuppath.m
+\family default
+, which is located at the root of the sourcetree.
+ You will need the signal processing package for Octave
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://octave.sf.net/signal/index.html
+\end_layout
+
+\end_inset
+
+ More easily, you can likely find this as a package for your GNU/Linux distribut
+ion; e.g., at the terminal on a Debian or Ubuntu system, type
+\end_layout
+
+\begin_layout Plain Layout
+
+\family typewriter
+sudo apt-get install octave-signal
+\end_layout
+
+\begin_layout Plain Layout
+to get it.
+ Beware that sometimes package repositories are not up-to-date.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Open a new session of Octave, and change to the directory where the frequency
+ sweep recordings are stored.
+ We load and organize all of these data at once using 
+\family typewriter
+loadgainrec
+\family default
+.
+ To see usage notes, type
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+>> help loadgainrec
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+ In my case, the basename is 
+\begin_inset Quotes eld
+\end_inset
+
+20100526
+\begin_inset Quotes erd
+\end_inset
+
+, and the stack addresses are 0x01, 0x02, 0x03, 0x04 (but given to 
+\family typewriter
+loadgainrec
+\family default
+ in base
+\begin_inset space ~
+\end_inset
+
+10, not hexadecimal).
+ The argument 
+\begin_inset Quotes eld
+\end_inset
+
+chan_map
+\begin_inset Quotes erd
+\end_inset
+
+ is a matrix of size 
+\begin_inset Formula $k\times4$
+\end_inset
+
+ (called the 
+\begin_inset Quotes eld
+\end_inset
+
+channel map
+\begin_inset Quotes erd
+\end_inset
+
+) that describes global labelling for each microphone; cf.
+ Sec.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chanmap:sec"
+
+\end_inset
+
+.
+ The argument 
+\begin_inset Quotes eld
+\end_inset
+
+trial_map
+\begin_inset Quotes erd
+\end_inset
+
+ is a 
+\begin_inset Formula $k\times4$
+\end_inset
+
+ matrix, where each row corresponds to one BatStack (with ordering matching
+ that of the given list of Stack addresses 
+\family typewriter
+stack_addrs
+\family default
+), and each column contains the value of the trial number in which the correspon
+ding channel of a particular BatStack was tested.
+ E.g., 
+\family typewriter
+trial_map
+\family default
+
+\begin_inset space ~
+\end_inset
+
+=
+\begin_inset space ~
+\end_inset
+
+[4,
+\begin_inset space ~
+\end_inset
+
+2,
+\begin_inset space ~
+\end_inset
+
+5,
+\begin_inset space ~
+\end_inset
+
+1;
+\begin_inset space ~
+\end_inset
+
+5,
+\begin_inset space ~
+\end_inset
+
+2,
+\begin_inset space ~
+\end_inset
+
+1,
+\begin_inset space ~
+\end_inset
+
+5], indicates that for BatStack 
+\family typewriter
+stack_addrs
+\family default
+(1), the file for gain calibration of (local) channel
+\begin_inset space ~
+\end_inset
+
+1 has trial number 4, channel
+\begin_inset space ~
+\end_inset
+
+2 has trial number 2, and so on.
+ Similarly, for the BatStack with address 
+\family typewriter
+stack_addrs
+\family default
+(2), gain calibration information for its (local) channel
+\begin_inset space ~
+\end_inset
+
+1 is in a 
+\begin_inset Quotes eld
+\end_inset
+
+trial
+\begin_inset space ~
+\end_inset
+
+5
+\begin_inset Quotes erd
+\end_inset
+
+ file, channel
+\begin_inset space ~
+\end_inset
+
+2 has trial number 2, and so on.
+\end_layout
+
+\begin_layout Standard
+In the terminal snapshot below, I first load my channel map from a local
+ file.
+ Then given the order in which I measured microphone channels --and other
+ specifics of my setup-- my function calls are thus
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+>> chan_map = load('../channel_map_mr.txt');
+\end_layout
+
+\begin_layout Plain Layout
+
+>> chan_map
+\end_layout
+
+\begin_layout Plain Layout
+
+chan_map =
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    5    6    7   13
+\end_layout
+
+\begin_layout Plain Layout
+
+   14    9    8   15
+\end_layout
+
+\begin_layout Plain Layout
+
+    1    2    3    4
+\end_layout
+
+\begin_layout Plain Layout
+
+   10   16   11   12
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+>> [F,t,Ts] = loadgainrec( '20100526', [1,2,3,4], chan_map, ones(4,1)*[1,2,3,4]
+ );
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_01_trial01.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_01_trial02.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_01_trial03.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_01_trial04.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_02_trial01.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_02_trial02.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_02_trial03.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_02_trial04.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_03_trial01.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_03_trial02.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_03_trial03.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_03_trial04.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_04_trial01.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_04_trial02.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_04_trial03.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+Reading from 20100526_04_trial04.bin...
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now that the recordings are loaded, it remains to partition the relevant
+ frequency range, extract calibration sweeps from each recording, determine
+ energy in each band for each microphone, and summarize results into a 
+\begin_inset Quotes eld
+\end_inset
+
+gain compensation matrix.
+\begin_inset Quotes erd
+\end_inset
+
+ In this example, the corresponding steps ar
+e
+\lang english
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}
+\end_layout
+
+\begin_layout Plain Layout
+
+>> freq_divs = 10e3:5e3:130e3;
+\end_layout
+
+\begin_layout Plain Layout
+
+>> [fenv, N] = freqenv( F, Ts, freq_divs );
+\end_layout
+
+\begin_layout Plain Layout
+
+Warning: insufficiently many gain cal sweeps for ch.
+ 11.
+\end_layout
+
+\begin_layout Plain Layout
+
+>> N'
+\end_layout
+
+\begin_layout Plain Layout
+
+ans =
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+   4   3   3   3   6   3   3   3   3   3   0   3   3   3   3   3
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+>> G = gencomp( freq_divs, fenv );
+\end_layout
+
+\begin_layout Plain Layout
+
+>> save -V7 ~/20100526.wagaincal.mat G fenv freq_divs
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+In words, the spectrum is linearly, uniformly partitioned into 5
+\begin_inset space ~
+\end_inset
+
+kHz intervals from 10
+\begin_inset space ~
+\end_inset
+
+kHz to 130
+\begin_inset space ~
+\end_inset
+
+kHz.
+ 
+\family typewriter
+freqenv
+\family default
+ then processes the recording for each microphone channel by detecting frequency
+ sweeps (using the m-function 
+\family typewriter
+getsweeps
+\family default
+), and for each band, bandpass filters each sweep, computes the rms value,
+ and takes the mean over all sweeps.
+ If not enough sweeps are detected for a particular channel, this is reported
+ to the terminal.
+ 
+\emph on
+This does not imply the recording for such a channel is bad.
+
+\emph default
+ It only indicates the automated sweep-extraction method failed; thus some
+ processing may need to be done 
+\begin_inset Quotes eld
+\end_inset
+
+by hand.
+\begin_inset Quotes erd
+\end_inset
+
+ The returned vector 
+\begin_inset Formula $N$
+\end_inset
+
+ indicates the number of sweeps found per channel.
+ Finally, 
+\family typewriter
+gencomp
+\family default
+ compiles intermediate results into a compensation matrix used by Radiance
+ (cf.
+ Sec.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "radiance:sec"
+
+\end_inset
+
+) and others.
+ We finish by saving results into a file, as described in Sec.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "gaincalfile:sec"
+
+\end_inset
+
+.
+ In the above example call, I save the *.wagaincal.mat file into my home directory
+ ---abbreviated by 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $\sim$
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+ on Unix systems.
 \end_layout
 
 \begin_layout Subsection
@@ -5542,50 +6346,50 @@ reference "misctools:sec"
 \end_inset
 
 ).
- At the time of writing, two m-functions (tested in Matlab, not yet verified
- in Octave) for reading and writing conformant data files are 
+\end_layout
+
+\begin_layout Standard
+We begin with some general organization notes.
+ Array data is not stored in a well known file container; instead, a custom
+ format is used, and several tools exist for working with these files.
+ The 
+\family typewriter
+batstack
+\family default
+ Python module (cf.
+ Sec.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "misctools:sec"
+
+\end_inset
+
+) provides a class for working with conformant Array data files.
+ Also, there are is a m-function (tested in Matlab, not yet verified in
+ Octave) for reading data files: 
 \family typewriter
 loadafile.m
 \family default
- and 
-\family typewriter
-genafile.m
-\family default
-, resp.
+.
  These can be found in the BatStack sourcetree under 
 \family typewriter
 src/analysis
 \family default
 .
-\end_layout
-
-\begin_layout Standard
-We begin with some general organization notes.
- Array data is not stored in a well known file container but can easily
- be read/written from any decent programming environment.
- E.g., from Octave or Matlab, try functions like 
-\family typewriter
-fopen
-\family default
-, 
-\family typewriter
-fwrite
-\family default
-, 
-\family typewriter
-fread
-\family default
-.
- A general library (or 
-\begin_inset Quotes eld
-\end_inset
-
-software development kit
-\begin_inset Quotes erd
-\end_inset
-
-) in Python, C and Matlab may be written in the future.
+ Writing these files is not a user-level task, but for those interested,
  
+\family typewriter
+genafile.py
+\family default
+ can generate an Array data file from raw blobs dumped from BatStack SD
+\begin_inset space ~
+\end_inset
+
+cards.
 \end_layout
 
 \begin_layout Itemize
@@ -6407,7 +7211,11 @@ freqenv
 \family typewriter
 loadgainrec
 \family default
-, both of which are also under the gain_calib directory.
+, both of which are also under the 
+\family typewriter
+gain_calib
+\family default
+ directory.
 \end_layout
 
 \begin_layout Standard
@@ -6416,26 +7224,34 @@ The naming convention is
 YYYYMMDD.wagaincal.mat
 \family default
 .
- Other items in the name indicate (most likely) a different storage container,
- e.g.
- 
-\family typewriter
-*.MATv7.mat
-\family default
- or 
-\family typewriter
-*.hdf
-\family default
- reveal that the file was saved in MAT version 7 format or hierarchical
- data format (HDF5), respectively.
+ Other items in the name are indicative of content (e.g.
+ frequency step-size).
 
 \family typewriter
 \series bold
  
 \family default
 N.B., the system will eventually have all dependencies on MATLAB removed.
- In particular, HDF5 will almost surely be the new standard data file container
- in this project.
+ In particular, HDF5 (
+\series default
+hierarchical data format
+\series bold
+) will almost surely be the new standard data file container in this project.
+\end_layout
+
+\begin_layout Standard
+A tutorial example of creating a gain calibration is in Sec.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "gaincal:sec"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -6503,13 +7319,21 @@ Lab at U.
 
 Maryland, College Park, the current edition is based on marking the fundamental
  sweep of bat vocalizations.
- In brief, one sets the "global" vocalization number and then proceeds to
- mark the corresponding call on each channel for which this is possible.
+ In brief, one sets the 
+\begin_inset Quotes eld
+\end_inset
+
+global
+\begin_inset Quotes erd
+\end_inset
+
+ vocalization number and then proceeds to mark the corresponding call on
+ each channel for which this is possible.
  Marking consists of selecting the range of channels to display (in muliples
  of 16, using drop-down menu in upper-right corner), navigating to a reasonable
- time segment (possibly changing the window length (in ms) to capture more
- or less signal in one view), and clicking the appropriate number button
- under "Zoom-and-mark".
+ time segment (possibly changing the window length to capture more or less
+ signal in one view), and clicking the appropriate number button under "Zoom-and
+-mark".
  This will cause a pop-up window to appear showing a spectrogram of the
  time segment of the selected channel in which the user (you) may select
  start and stop points of the fundamental.
@@ -6620,6 +7444,14 @@ version
 \end_inset
 
  that indicates to which specification it adheres.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+N.B., the system will eventually have all dependencies on MATLAB removed.
+ In particular, HDF5 will almost surely be the new standard data file container
+ in this project.
 \end_layout
 
 \begin_layout Subsubsection
@@ -7048,7 +7880,8 @@ BatStack_mcu_board ...
 \end_layout
 
 \begin_layout Description
-BatStack_mic_amp ...
+BatStack_mic_amp hardware design for the microphone amplifier board; includes
+ layout and circuit schematic.
 \end_layout
 
 \begin_layout Description
@@ -7063,6 +7896,22 @@ src/util/gain_calibration
 \family default
 ).
  
+\end_layout
+
+\begin_layout Description
+releases/ hardware releases; these should be in a state ready for submission
+ to a boardhouse for manufacturing.
+\end_layout
+
+\begin_layout Description
+archived/ old designs; most or all of these were made using ExpressPCB layout
+ format.
+ In general, these designs should 
+\emph on
+not
+\emph default
+ be used for new constructions, but are kept here for reference and as idea
+ fodder.
 \end_layout
 
 \begin_layout Subsection
@@ -7574,6 +8423,16 @@ name "mcubrd_schem:fig"
 
 \begin_layout Subsection
 Other
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "otherhardware:sec"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -11257,6 +12116,14 @@ dumpsd
 \end_layout
 
 \begin_layout Description
+src/util/
+\family typewriter
+bsinfo.py
+\family default
+ Print header/parameters from a BatStack Array data file.
+\end_layout
+
+\begin_layout Description
 src/analysis/
 \family typewriter
 loadtrial.py
@@ -11488,6 +12355,36 @@ end{verbatim}
 \end_layout
 
 \begin_layout Description
+src/analysis/
+\family typewriter
+genafile.py
+\family default
+ Combine and annotate disparate/unsorted Array data, most likely obtained
+ as blobs from an SD
+\begin_inset space ~
+\end_inset
+
+card via 
+\family typewriter
+dumpsd
+\family default
+.
+ The resultant file is a conformant Array data file (cf.
+ Sec.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "array_format:sec"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Description
 src/util/legacy/
 \family typewriter
 update12.py
@@ -11544,6 +12441,44 @@ specification.
 
 2.
  
+\end_layout
+
+\begin_layout Description
+src/util/dumpsd Extract trial data from an SD
+\begin_inset space ~
+\end_inset
+
+card, including notes about the BatStack ID, software build date, etc.
+ This is a 
+\begin_inset Quotes eld
+\end_inset
+
+low-level
+\begin_inset Quotes erd
+\end_inset
+
+ tool to be used (in some sense) by a front-end application later.
+ Often references to 
+\begin_inset Quotes eld
+\end_inset
+
+unsorted
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+disparate
+\begin_inset Quotes erd
+\end_inset
+
+ trial or Stack data are regarding the files obtained with 
+\family typewriter
+dumpsd
+\family default
+.
 \end_layout
 
 \begin_layout Section
