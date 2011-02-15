@@ -515,7 +515,7 @@ end
 
 % --------------------------------------------------------------------
 function about_monologue_Callback(hObject, eventdata, handles)
-msgbox(sprintf('Scott Livingston\nAuditory Neuroethology Lab (or the "Batlab")\nU. Maryland, College Park\n(c) 2009, 2010'),'beamviz, sonar beam visualization','modal');
+msgbox(sprintf('Scott Livingston  <slivingston@caltech.edu>\nAuditory Neuroethology Lab (or the "Batlab")\nU. Maryland, College Park\n(c) 2009-2011'),'beamviz, sonar beam visualization','modal');
 
 
 % --- Executes on slider movement.
@@ -752,7 +752,9 @@ function Untitled_3_Callback(hObject, eventdata, handles)
 % --------------------------------------------------------------------
 function set_def_paths_Callback(hObject, eventdata, handles)
 global BEAMVIZ_GLOBAL;
-req_path = uigetdir( '.', 'Select default directory for finding stuff.' );
+msg = 'Select default directory for finding stuff.';
+fprintf( '\n%s\n', msg );
+req_path = uigetdir( '.', msg );
 if isequal(req_path,0)
     return % User hit Cancel button; ignore.
 end

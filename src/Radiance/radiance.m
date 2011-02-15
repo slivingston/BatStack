@@ -22,7 +22,7 @@ function varargout = radiance(varargin)
 
 % Edit the above text to modify the response to help radiance
 
-% Last Modified by GUIDE v2.5 24-Jun-2010 17:41:59
+% Last Modified by GUIDE v2.5 15-Feb-2011 01:47:13
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -95,6 +95,8 @@ RADIANCE_GLOBAL.beam_lo_freq = 28e3; % Hz
 RADIANCE_GLOBAL.beam_hi_freq = 42e3; % Hz
 RADIANCE_GLOBAL.last_saved_filename = '';
 RADIANCE_GLOBAL.detail_chan_time_lock = 0; % Regarding forcing detailed channel view to match corresponding channel in signal grid (i.e. its "local time").
+RADIANCE_GLOBAL.spect_min = -100;
+RADIANCE_GLOBAL.spect_max = -20;
 
 % UIWAIT makes radiance wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -286,6 +288,8 @@ RADIANCE_GLOBAL.current_voc = 1;
 RADIANCE_GLOBAL.beam_lo_freq = 28e3; % Hz
 RADIANCE_GLOBAL.beam_hi_freq = 42e3; % Hz
 RADIANCE_GLOBAL.detail_chan_time_lock = 0;
+RADIANCE_GLOBAL.spect_min = -100;
+RADIANCE_GLOBAL.spect_max = -20;
 
 % Refresh relevant GUI widgets
 update_button_grid(1);
@@ -357,7 +361,7 @@ function credits_box_Callback(hObject, eventdata, handles)
 % hObject    handle to credits_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-msgbox(sprintf('Scott Livingston\nAuditory Neuroethology Lab (or the "Batlab")\nU. Maryland, College Park\n(c) 2009, 2010'),'Radiance, software for wideband microphone array analysis','modal');
+msgbox(sprintf('Scott Livingston  <slivingston@caltech.edu>\nAuditory Neuroethology Lab (or the "Batlab")\nU. Maryland, College Park\n(c) 2009-2011'),'Radiance, software for wideband microphone array analysis','modal');
 
 
 % --------------------------------------------------------------------
@@ -532,6 +536,8 @@ RADIANCE_GLOBAL.current_chan_group = 1;
 RADIANCE_GLOBAL.current_popped_chan = nan;
 RADIANCE_GLOBAL.current_voc = 1;
 RADIANCE_GLOBAL.detail_chan_time_lock = 0;
+RADIANCE_GLOBAL.spect_min = -100;
+RADIANCE_GLOBAL.spect_max = -20;
 
 % Refresh relevant GUI widgets
 update_button_grid(1);
@@ -650,7 +656,9 @@ function set_def_paths_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global RADIANCE_GLOBAL;
-req_path = uigetdir( '.', 'Select default directory for finding stuff.' );
+msg = 'Select default directory for finding stuff.';
+fprintf( '\n%s\n', msg );
+req_path = uigetdir( '.', msg );
 if isequal(req_path,0)
     return % User hit Cancel button; ignore.
 end
@@ -1627,6 +1635,7 @@ surf( ax_h, ...
       10*log10(abs(Pwr)), 'edgecolor', 'none' );
 view( ax_h, 0, 90 );
 axis( ax_h, 'tight' );
+caxis( ax_h, [RADIANCE_GLOBAL.spect_min, RADIANCE_GLOBAL.spect_max] );
 title( sprintf('channel %d',ch_num) );
 xlabel( 'Time (s)' );
 ylabel( 'Frequency (kHz)' );
@@ -2166,3 +2175,51 @@ set(RADIANCE_GLOBAL.handles.wagaincal_filename_box, 'TooltipString', RADIANCE_GL
 update_plots;
 
 
+
+function spectrogram_max_box_Callback(hObject, eventdata, handles)
+global RADIANCE_GLOBAL;
+requested_max = str2num( get(hObject,'String') );
+if isempty(requested_max) || requested_max < RADIANCE_GLOBAL.spect_min
+    set(RADIANCE_GLOBAL.handles.spectrogram_max_box,'String', num2str(RADIANCE_GLOBAL.spect_max) );
+    return % Invalid max; ignore.
+end
+RADIANCE_GLOBAL.spect_max = requested_max;
+return
+
+
+% --- Executes during object creation, after setting all properties.
+function spectrogram_max_box_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to spectrogram_max_box (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function spectrogram_min_box_Callback(hObject, eventdata, handles)
+global RADIANCE_GLOBAL;
+requested_min = str2num( get(hObject,'String') );
+if isempty(requested_min) || requested_min > RADIANCE_GLOBAL.spect_max
+    set(RADIANCE_GLOBAL.handles.spectrogram_min_box,'String', num2str(RADIANCE_GLOBAL.spect_min) );
+    return % Invalid min; ignore.
+end
+RADIANCE_GLOBAL.spect_min = requested_min;
+return
+
+
+% --- Executes during object creation, after setting all properties.
+function spectrogram_min_box_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to spectrogram_min_box (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
