@@ -181,8 +181,8 @@ Returns nothing.
 
 This is a convenience routine for reading header/parameter data from
 an Array data file without actually loading Array data into memory;
-indeed, this BSArrayFile object is unaltered. (Use readfile method to
-actually load a file.)
+indeed, this BSArrayFile object is unaltered. (Use readfile method
+to actually load a file.)
 
 Returns True on success; False on failure.
 """
@@ -236,8 +236,8 @@ Returns True on success; False on failure.
         """Creates list of channel data, for use outside this object.
 
 Returns list of self.num_mics ndarrays (dtype=uint16), using array
-from data attribute of this object if available, otherwise creating a
-zero array. Note that the list is ordered, i.e. the first element
+from data attribute of this object if available, otherwise creating
+a zero array. Note that the list is ordered, i.e. the first element
 corresponds to global mic channel 1, the second to channel 2, etc.
 """
         if len(self.data) < 1:
@@ -336,8 +336,8 @@ available... this is dangerous! In general you should specify
 which version based on contents of the file header.
 
 On success, returns a dictionary with keys of channel numbers and
-values as ndarrays (type defined in NumPy).  Note that this how we
-expect the ``data'' attribute of BSArrayFile instances to look
+values as ndarrays (type defined in NumPy).  Note that this is how
+we expect the ``data'' attribute of BSArrayFile instances to look
 (i.e., you may simply save the result of unpack_arrdata directly
 to self.data)
 

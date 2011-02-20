@@ -14,5 +14,7 @@ if len(sys.argv) != 2:
     exit(1)
     
 bsaf = batstack.BSArrayFile()
-if not bsaf.print_hdr(sys.argv[1]):
-    print "Error: failed to read %s" % sys.argv[1]
+bsaf.print_hdr(sys.argv[1])
+# Errors are reported to stdout from within print_hdr class method
+#if not bsaf.print_hdr(sys.argv[1]):
+    #print "Error: failed to read %s" % sys.argv[1]
