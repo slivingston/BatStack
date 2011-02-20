@@ -10,6 +10,12 @@ an absolute value operation and modulo are applied.
 The abs is natural, but mod causes large signals to appear again
 near zero. This is in significant contrast to clipping.
 
+I tend to interchange freely between indexing channels via keys
+in a dictionary (as stored internally in BSArrayFile object)
+and simply counting from 1 to total number of microphone channels.
+This must be cleaned up later to only use dictionary keys, which
+is more general.
+
 Scott Livingston  <slivingston@caltech.edu>
 Feb 2011.
 """
@@ -23,6 +29,9 @@ import scipy.special as sp_special
 import matplotlib.pyplot as plt
 
 import batstack
+
+# Convenience renaming:
+eps = np.finfo(np.float).eps
 
 def piston( f, # frequency
             a_h, a_v,
@@ -54,11 +63,11 @@ NOTES: - It is possible I have made a mistake in the below
 """
     k = 2*np.pi*f/c # wave number
     
-    if type(theta) is types.IntType or type(theta) is types.FloatType:
+    if type(theta) is types.IntType or type(theta) is types.FloatType or type(theta) is np.float64:
         theta = np.array([theta], dtype=np.float64)
     else:
         theta = np.array(theta, dtype=np.float64)
-    if type(phi) is types.IntType or type(phi) is types.FloatType:
+    if type(phi) is types.IntType or type(phi) is types.FloatType or type(phi) is np.float64:
         phi = np.array([phi], dtype=np.float64)
     else:
         phi = np.array(phi, dtype=np.float64)
@@ -102,6 +111,37 @@ test_piston takes frequency from argv list.
     plt.xlabel("angle in radians")
     plt.title(str(freq/1000)+" kHz")
     plt.show()
+    
+def get_dir(src_pos, mike_pos):
+    """Determine r, theta, phi values from source to microphones.
+
+src_pos should follow format as described elsewhere,
+i.e. an array of x,y,z,t,p, where
+x,y,z are rectangular coordinates and
+t,p are spherical-like coordinates (think ``theta'' and
+``phi'' for azimuth and elevation with respect to the
+x-axis; e.g., t,p = 0,0 indicates aimed parallel to
+positive x-axis.
+
+Result is returned as a N x 3 matrix, where N is the number
+of microphones (i.e. number of rows in given mike_pos matrix).
+"""
+    if len(mike_pos.shape) > 1:
+        num_mics = mike_pos.shape[0]
+        dir_mat = np.zeros(shape=(num_mics, 3))
+        for k in range(num_mics):
+            trans_vect = np.array([mike_pos[k][j]-src_pos[j] for j in range(3)])
+            dir_mat[k][0] = np.sqrt(np.sum([u**2 for u in trans_vect])) # Radius
+            dir_mat[k][1] = np.arctan2(trans_vect[1], trans_vect[0])
+            dir_mat[k][2] = np.arctan2(trans_vect[2], np.sqrt(trans_vect[0]**2 + trans_vect[1]**2))
+    else: # Handle special case of single microphone position
+        num_mics = 1
+        trans_vect = np.array([mike_pos[j]-src_pos[j] for j in range(3)])
+        dir_mat = np.array([0., 0, 0])
+        dir_mat[0] = np.sqrt(np.sum([u**2 for u in trans_vect])) # Radius
+        dir_mat[1] = np.arctan2(trans_vect[1], trans_vect[0])
+        dir_mat[2] = np.arctan2(trans_vect[2], np.sqrt(trans_vect[0]**2 + trans_vect[1]**2))
+    return dir_mat
 
 if __name__ == "__main__":
     parser = OptionParser()
@@ -171,10 +211,25 @@ you would enter 2,3.4,-1,.3,-1.1
     src_duration = .01 # 10 ms 
     t = np.arange(0, src_duration, sim_bsaf.sample_period)
     x = (max_val+1)/4.*np.sin(2*np.pi*t*options.src_freq*1e3)
+    
+    dir_mat = get_dir(src_pos, mike_pos)
+    P = dict()
+    max_P = -1
+    for k in sim_bsaf.data.keys():
+        P[k] = piston(options.src_freq*1e3, .016, .016,
+                      dir_mat[k-1][1], # Theta
+                      dir_mat[k-1][2]) # Phi
+        if max_P < P[k]:
+            max_P = P[k]
+    if max_P <= eps:
+        print "Warning: max scaling factor is less than machine epsilon."
+    for k in P.keys():
+        P[k] /= max_P # Normalize
+    
     for k in sim_bsaf.data.keys():
         chan_mean = np.mean(sim_bsaf.data[k])
         sim_bsaf.data[k] -= chan_mean
-        sim_bsaf.data[k][src_start_ind:(src_start_ind+len(x))] += x
+        sim_bsaf.data[k][src_start_ind:(src_start_ind+len(x))] += x*P[k]
         #for x_ind in range(len(x)):
         #    sim_bsaf.data[k+1][src_start_ind+x_ind] += x[x_ind]
         sim_bsaf.data[k] += chan_mean
