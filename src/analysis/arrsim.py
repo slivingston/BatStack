@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 """
-Simulate microphone array measurement; models BatStack Array. 
+Simulate microphone array measurement; models BatStack Array.
+
+NOTES:
+
+Note that we wrap white noise outside valid range back into the signal!
+This procedure is biased toward lower values; explicitly,
+an absolute value operation and modulo are applied.
+The abs is natural, but mod causes large signals to appear again
+near zero. This is in significant contrast to clipping.
 
 Scott Livingston  <slivingston@caltech.edu>
 Feb 2011.
@@ -101,15 +109,25 @@ if __name__ == "__main__":
                       help="wamike.txt position file; cf. BatStack ref manual")
     parser.add_option("-p", "--pose", dest="src_pose", default="0,0,0,0,0",
                       help="source position; with respect to the x-axis, and of the form x,y,z,t,p")
-    parser.add_option("-t", dest="duration", type="float", default=.01,
+    parser.add_option("-t", dest="duration", type="float", default=.1,
                       help="duration of simulated recording.")
     parser.add_option("-w", dest="wnoise", type="float", nargs=2, default=(512, 32),
                       help="mean and variance (in bits) of white background noise.")
+    parser.add_option("-c", dest="src_freq", type="float", default=35.,
+                      help="piston source frequency (in kHz).")
+    parser.add_option("-b", "--bitwidth", dest="sample_width", metavar="BITWIDTH", type="int", default=10,
+                      help="sample width of A/D converter; default is 10 bits.")
+    parser.add_option("-n", "--nonoise", action="store_true", dest="no_noise", default=False)
     
     (options, args) = parser.parse_args()
     if options.pos_filename is None:
         print "A microphone position file must be provided.\n(See -h for usage note.)"
         exit(1)
+        
+    if options.sample_width < 0:
+        print "Error: sample width must be positive (given %d)." % options.sample_width
+        exit(1)
+    max_val = 2**(options.sample_width)-1
         
     mike_pos = np.loadtxt(options.pos_filename)
     if (len(mike_pos.shape) == 1 and mike_pos.shape[0] != 3) \
@@ -133,10 +151,37 @@ you would enter 2,3.4,-1,.3,-1.1
     else:
         sim_bsaf.num_mics = mike_pos.shape[0]
     sim_bsaf.trial_number = 1
+    sim_bsaf.notes = "Simulated data!"
     num_samples = np.ceil(options.duration/sim_bsaf.sample_period)
-    for k in range(sim_bsaf.num_mics):
-        #sim_bsaf.data[k+1] = np.random.random_integers(low=0, high=1023, size=1000)
-        sim_bsaf.data[k+1] = np.mod(np.ceil(np.abs(np.random.randn(num_samples)
-                                                   *options.wnoise[1]+options.wnoise[0])), 1024)
+    if not options.no_noise:
+        for k in range(sim_bsaf.num_mics):
+            #sim_bsaf.data[k+1] = np.random.random_integers(low=0, high=1023, size=1000)
+            sim_bsaf.data[k+1] = np.mod(np.ceil(np.abs(np.random.randn(num_samples)
+                                                       *options.wnoise[1]+options.wnoise[0])), max_val+1)
+            # Note that we wrap white noise outside valid range back into the signal!
+            # This procedure is biased toward lower values; explicitly,
+            # an absolute value operation and modulo are applied.
+            # The abs is natural, but mod causes large signals to appear again near zero.
+            # This is in significant contrast to clipping.
+    else: # Noiseless recording:
+        for k in range(sim_bsaf.num_mics):
+            sim_bsaf.data[k+1] = (max_val+1)/2.*np.ones(num_samples)
+    
+    src_start_ind = int(num_samples/2)
+    src_duration = .01 # 10 ms 
+    t = np.arange(0, src_duration, sim_bsaf.sample_period)
+    x = (max_val+1)/4.*np.sin(2*np.pi*t*options.src_freq*1e3)
+    for k in sim_bsaf.data.keys():
+        chan_mean = np.mean(sim_bsaf.data[k])
+        sim_bsaf.data[k] -= chan_mean
+        sim_bsaf.data[k][src_start_ind:(src_start_ind+len(x))] += x
+        #for x_ind in range(len(x)):
+        #    sim_bsaf.data[k+1][src_start_ind+x_ind] += x[x_ind]
+        sim_bsaf.data[k] += chan_mean
+    
+    # Limit signal range
+    for k in sim_bsaf.data.keys():
+        sim_bsaf.data[k].clip(0, max_val, out=sim_bsaf.data[k])
+    
     if sim_bsaf.writefile("test.bin", prevent_overwrite=False) == False:
         print "Error while saving simulation results."
