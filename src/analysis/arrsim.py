@@ -17,8 +17,8 @@ This must be cleaned up later to only use dictionary keys, which
 is more general.
 
 N.B., we assume end-trigger (i.e. time at trigger is 0).
-(At time of writing, this doesn't affect computation or results;
-it only amounts to an offset for reported times at the terminal.)
+At time of writing, this only affects timestamps in the sim d3 file
+(which is only generated if requested, anyway).
 
 Scott Livingston  <slivingston@caltech.edu>
 Feb-Mar 2011.
@@ -30,6 +30,7 @@ from optparse import OptionParser # Deprecated since Python v2.7, but for folks 
 
 import numpy as np
 import scipy.special as sp_special
+import scipy.io as sio
 import matplotlib.pyplot as plt
 
 import batstack
@@ -166,6 +167,8 @@ if __name__ == "__main__":
                       help="in m/s; default is 343.")
     parser.add_option("-o", dest="output_filename", default="test.bin",
                       help="name of file to save results to; default is ``test.bin''")
+    parser.add_option("-g", "--d3out", action="store_true", dest="make_d3_traj", default=False,
+                      help="create d3-conforming trajectory file corresponding to this simulation; file-name is based on that of sim Array data file.")
     
     (options, args) = parser.parse_args()
     if options.pos_filename is None:
@@ -260,3 +263,20 @@ you would enter 2,3.4,-1,.3,-1.1
     
     if sim_bsaf.writefile(options.output_filename, prevent_overwrite=False) == False:
         print "Error while saving simulation results."
+        
+    # Generate spatial trajectory in (sim) d3 file, if requested
+    if options.make_d3_traj:
+        d3_fps = 250.
+        num_d3_samples = np.ceil(options.duration*d3_fps)
+        d3a = dict()
+        d3a["endframe"] = 0.
+        d3a["startframe"] = -num_d3_samples+1.
+        d3a["fvideo"] = 250. # 250 fps
+        d3a["object"] = dict()
+        d3a["object"]["name"] = "bat"
+        d3a["object"]["video"] = np.outer(np.ones(int(num_d3_samples)), src_pos[:3])
+        d3a_filename = options.output_filename[:options.output_filename.rfind(".bin")]+"_d3.mat"
+        try: 
+            sio.savemat(d3a_filename, {"d3_analysed": d3a})
+        except:
+            print "Error: failed to save sim d3 trajectory file, " + d3a_filename
