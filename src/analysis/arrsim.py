@@ -16,8 +16,12 @@ and simply counting from 1 to total number of microphone channels.
 This must be cleaned up later to only use dictionary keys, which
 is more general.
 
+N.B., we assume end-trigger (i.e. time at trigger is 0).
+(At time of writing, this doesn't affect computation or results;
+it only amounts to an offset for reported times at the terminal.)
+
 Scott Livingston  <slivingston@caltech.edu>
-Feb 2011.
+Feb-Mar 2011.
 """
 
 import sys
@@ -148,7 +152,7 @@ if __name__ == "__main__":
     parser.add_option("-f", "--wamike", dest="pos_filename", default=None,
                       help="wamike.txt position file; cf. BatStack ref manual")
     parser.add_option("-p", "--pose", dest="src_pose", default="0,0,0,0,0",
-                      help="source position; with respect to the x-axis, and of the form x,y,z,t,p")
+                      help="source position (default is 0,0,0,0,0); with respect to the x-axis, and of the form x,y,z,t,p")
     parser.add_option("-t", dest="duration", type="float", default=.1,
                       help="duration of simulated recording.")
     parser.add_option("-w", dest="wnoise", type="float", nargs=2, default=(512, 32),
@@ -158,6 +162,10 @@ if __name__ == "__main__":
     parser.add_option("-b", "--bitwidth", dest="sample_width", metavar="BITWIDTH", type="int", default=10,
                       help="sample width of A/D converter; default is 10 bits.")
     parser.add_option("-n", "--nonoise", action="store_true", dest="no_noise", default=False)
+    parser.add_option("-s", "--speed", type="float", dest="speed_sound", default=343.,
+                      help="in m/s; default is 343.")
+    parser.add_option("-o", dest="output_filename", default="test.bin",
+                      help="name of file to save results to; default is ``test.bin''")
     
     (options, args) = parser.parse_args()
     if options.pos_filename is None:
@@ -212,6 +220,9 @@ you would enter 2,3.4,-1,.3,-1.1
     t = np.arange(0, src_duration, sim_bsaf.sample_period)
     x = (max_val+1)/4.*np.sin(2*np.pi*t*options.src_freq*1e3)
     
+    # N.B., we assume end-trigger (i.e. time at trigger is 0)
+    print "Starting emission at time %f s" % (sim_bsaf.sample_period*(src_start_ind-num_samples+1))
+    
     dir_mat = get_dir(src_pos, mike_pos)
     P = dict()
     max_P = -1
@@ -227,16 +238,25 @@ you would enter 2,3.4,-1,.3,-1.1
         P[k] /= max_P # Normalize
     
     for k in sim_bsaf.data.keys():
+        # Compute offset in indices due to time-of-flight from source to microphone
+        tof_offset = int(np.ceil((dir_mat[k-1][0]/options.speed_sound)/sim_bsaf.sample_period))
+        
+        # Bound index range to fit channel recording length
+        lower_ind = tof_offset+src_start_ind
+        upper_ind = tof_offset+src_start_ind+len(x)
+        if lower_ind >= len(sim_bsaf.data[k]):
+            continue # This channel didn't receive signal in time
+        if upper_ind > len(sim_bsaf.data[k]):
+            upper_ind = len(sim_bsaf.data[k])
+        
         chan_mean = np.mean(sim_bsaf.data[k])
         sim_bsaf.data[k] -= chan_mean
-        sim_bsaf.data[k][src_start_ind:(src_start_ind+len(x))] += x*P[k]
-        #for x_ind in range(len(x)):
-        #    sim_bsaf.data[k+1][src_start_ind+x_ind] += x[x_ind]
+        sim_bsaf.data[k][lower_ind:upper_ind] += x[:(upper_ind-lower_ind)]*P[k]
         sim_bsaf.data[k] += chan_mean
     
     # Limit signal range
     for k in sim_bsaf.data.keys():
         sim_bsaf.data[k].clip(0, max_val, out=sim_bsaf.data[k])
     
-    if sim_bsaf.writefile("test.bin", prevent_overwrite=False) == False:
+    if sim_bsaf.writefile(options.output_filename, prevent_overwrite=False) == False:
         print "Error while saving simulation results."
