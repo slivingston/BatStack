@@ -29,6 +29,7 @@ import types
 from optparse import OptionParser # Deprecated since Python v2.7, but for folks using 2.5 or 2.6...
 
 import numpy as np
+import numpy.linalg as la
 import scipy.special as sp_special
 import scipy.io as sio
 import matplotlib.pyplot as plt
@@ -93,6 +94,40 @@ NOTES: - It is possible I have made a mistake in the below
         return 4*np.outer(np.abs(v_factor), np.abs(h_factor)) # make P from outer product.
     else:
         return 4*np.abs(v_factor*h_factor)
+    
+def get_front_center_pose(mike_pos, # Microphone position matrix, as elsewhere.
+                          center_dist=1., # meters from array center
+                          origin_in_front=True):
+    """compute ``front-and-center'' (or ``ideal'') pose w.r.t. microphones.
+
+Note that I assume origin is on the side of the array that is
+``in front''. This can be flipping by setting origin_in_front
+argument to False.
+
+Returns result as a 5-element array, specifying the source pose.
+(compatible with get_dir function, etc.)
+"""
+    mike_center = np.array([np.mean((mike_pos.T)[k]) for k in range(3)])
+    dir_mat = get_dir(mike_center, mike_pos)
+    far_index = np.argmax(dir_mat, axis=0)[0]
+    if far_index > 1:
+        far2_index = np.argmax((dir_mat.T)[0][:far_index])
+    else:
+        far2_index = np.argmax((dir_mat.T)[0][(far_index+1):]) + far_index+1
+    
+    proj_vect = np.cross(mike_pos[far_index]-mike_center,
+                         mike_pos[far2_index]-mike_center)
+    proj_vect = proj_vect*center_dist/la.norm(proj_vect) # Scale to desired distance
+    
+    # Set appropriate orientation
+    if np.dot(proj_vect, mike_center) > 0 or not origin_in_front:
+        proj_vect *= -1.
+    
+    theta = np.arctan2(-proj_vect[1], -proj_vect[0]) # Find angular direction
+    phi = np.arctan2(-proj_vect[2], np.sqrt(proj_vect[0]**2 + proj_vect[1]**2))
+    proj_vect += mike_center # Translate to global coordinates
+    
+    return np.array([proj_vect[0], proj_vect[1], proj_vect[2], theta, phi])
     
 def test_piston():
     """use case for piston function.
@@ -169,6 +204,10 @@ if __name__ == "__main__":
                       help="name of file to save results to; default is ``test.bin''")
     parser.add_option("-g", "--d3out", action="store_true", dest="make_d3_traj", default=False,
                       help="create d3-conforming trajectory file corresponding to this simulation; file-name is based on that of sim Array data file.")
+    parser.add_option("--spherical-loss", action="store_true", dest="apply_spherical_loss", default=False,
+                      help="apply pressure loss of r^(-1) factor, i.e. ``spherical spreading''; disabled by default.")
+    parser.add_option("--front-and-center", action="store_true", dest="src_front_center", default=False,
+                      help="place source ``front-and-center'' with respect to and toward center of the microphone array; overrides any other source position configuration")
     
     (options, args) = parser.parse_args()
     if options.pos_filename is None:
@@ -186,15 +225,20 @@ if __name__ == "__main__":
         print "Error: given file appears malformed: %s" % options.pos_filename
         exit(1)
         
-    try:
-        src_pos = np.array([float(k) for k in options.src_pose.split(",")])
-    except ValueError:
-        print "Source position invalid; it should be comma-separated real numbers."
-        print """E.g., with an x,y,z position of (2, 3.4, -1) and directed
+    if options.src_front_center:
+        # Place source in ``ideal position'' with respect to microphones.
+        src_pos = get_front_center_pose(mike_pos, center_dist=1.)
+        print "Source has fixed pose: (%.4f, %.4f, %.4f, %.4f, %.4f)" % tuple(src_pos)
+    else:
+        try:
+            src_pos = np.array([float(k) for k in options.src_pose.split(",")])
+        except ValueError:
+            print "Source position invalid; it should be comma-separated real numbers."
+            print """E.g., with an x,y,z position of (2, 3.4, -1) and directed
 .3 radians CCW on the z-axis and -1.1 radians CCW on the y-axis,
 you would enter 2,3.4,-1,.3,-1.1
 """
-        exit(1)
+            exit(1)
         
     sim_bsaf = batstack.BSArrayFile()
     if len(mike_pos.shape) == 1:
@@ -221,7 +265,7 @@ you would enter 2,3.4,-1,.3,-1.1
     src_start_ind = int(num_samples/2)
     src_duration = .01 # 10 ms 
     t = np.arange(0, src_duration, sim_bsaf.sample_period)
-    x = (max_val+1)/4.*np.sin(2*np.pi*t*options.src_freq*1e3)
+    x = 2000.*np.sin(2*np.pi*t*options.src_freq*1e3)
     
     # N.B., we assume end-trigger (i.e. time at trigger is 0)
     print "Starting emission at time %f s" % (sim_bsaf.sample_period*(src_start_ind-num_samples+1))
@@ -252,9 +296,18 @@ you would enter 2,3.4,-1,.3,-1.1
         if upper_ind > len(sim_bsaf.data[k]):
             upper_ind = len(sim_bsaf.data[k])
         
+        if options.apply_spherical_loss:
+            # Spherical spreading loss (just r^(-1) here);
+            # this is reduction in pressure; baseline distance is 10 cm.
+            sph_loss = .1/(dir_mat[k-1][0])
+        else:
+            sph_loss = 1. # Hopefully this does not cause round-off errors to occur
+            # (as opposed to not multiplying by sph_los=1., i.e. by
+            # using a conditional statement.)
+        
         chan_mean = np.mean(sim_bsaf.data[k])
         sim_bsaf.data[k] -= chan_mean
-        sim_bsaf.data[k][lower_ind:upper_ind] += x[:(upper_ind-lower_ind)]*P[k]
+        sim_bsaf.data[k][lower_ind:upper_ind] += x[:(upper_ind-lower_ind)]*P[k]*sph_loss
         sim_bsaf.data[k] += chan_mean
     
     # Limit signal range
