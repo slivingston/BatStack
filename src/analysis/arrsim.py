@@ -16,6 +16,16 @@ and simply counting from 1 to total number of microphone channels.
 This must be cleaned up later to only use dictionary keys, which
 is more general.
 
+N.B., source level is not a fixed, physical value (e.g. it is not specified in
+units of dB SPL). That is, everything should be accurate with respect to the
+simulation, and the resulting signal levels differ from physical quantities by a
+uniform scaling factor (hence, beamshape, etc. should be unaffected).  I
+consider this a weakness and plan to implement accurate source level
+representation.
+
+N.B., lacks (frequency-dependent) atmospheric attenuation!  I plan to implement
+values recorded in (Lawrence & Simmons, 1982).
+
 N.B., we assume end-trigger (i.e. time at trigger is 0).
 At time of writing, this only affects timestamps in the sim d3 file
 (which is only generated if requested, anyway).
@@ -107,8 +117,10 @@ argument to False.
 Returns result as a 5-element array, specifying the source pose.
 (compatible with get_dir function, etc.)
 """
-    mike_center = np.array([np.mean((mike_pos.T)[k]) for k in range(3)])
+    mike_center = np.array([np.mean((mike_pos.T)[0]), np.mean((mike_pos.T)[1]),
+                            np.mean((mike_pos.T)[2]), 0, 0])
     dir_mat = get_dir(mike_center, mike_pos)
+    mike_center = mike_center[:3]
     far_index = np.argmax(dir_mat, axis=0)[0]
     if far_index > 1:
         far2_index = np.argmax((dir_mat.T)[0][:far_index])
@@ -172,15 +184,15 @@ of microphones (i.e. number of rows in given mike_pos matrix).
         for k in range(num_mics):
             trans_vect = np.array([mike_pos[k][j]-src_pos[j] for j in range(3)])
             dir_mat[k][0] = np.sqrt(np.sum([u**2 for u in trans_vect])) # Radius
-            dir_mat[k][1] = np.arctan2(trans_vect[1], trans_vect[0])
-            dir_mat[k][2] = np.arctan2(trans_vect[2], np.sqrt(trans_vect[0]**2 + trans_vect[1]**2))
+            dir_mat[k][1] = np.arctan2(trans_vect[1], trans_vect[0]) - src_pos[3]
+            dir_mat[k][2] = np.arctan2(trans_vect[2], np.sqrt(trans_vect[0]**2 + trans_vect[1]**2)) - src_pos[4]
     else: # Handle special case of single microphone position
         num_mics = 1
         trans_vect = np.array([mike_pos[j]-src_pos[j] for j in range(3)])
         dir_mat = np.array([0., 0, 0])
         dir_mat[0] = np.sqrt(np.sum([u**2 for u in trans_vect])) # Radius
-        dir_mat[1] = np.arctan2(trans_vect[1], trans_vect[0])
-        dir_mat[2] = np.arctan2(trans_vect[2], np.sqrt(trans_vect[0]**2 + trans_vect[1]**2))
+        dir_mat[1] = np.arctan2(trans_vect[1], trans_vect[0]) - src_pos[3]
+        dir_mat[2] = np.arctan2(trans_vect[2], np.sqrt(trans_vect[0]**2 + trans_vect[1]**2)) - src_pos[4]
     return dir_mat
 
 if __name__ == "__main__":
@@ -208,6 +220,10 @@ if __name__ == "__main__":
                       help="apply pressure loss of r^(-1) factor, i.e. ``spherical spreading''; disabled by default.")
     parser.add_option("--front-and-center", action="store_true", dest="src_front_center", default=False,
                       help="place source ``front-and-center'' with respect to and toward center of the microphone array; overrides any other source position configuration")
+    parser.add_option("--fac-dist", type="float", dest="fac_dist", default=1.,
+                      help="distance from array for ``front-and-center'' source position; default is 1 m.")
+    parser.add_option("--source-level", type="float", dest="src_level", default=256.,
+                      help="magnitude of source (not physically meaningful); default is 256.")
     
     (options, args) = parser.parse_args()
     if options.pos_filename is None:
@@ -227,7 +243,9 @@ if __name__ == "__main__":
         
     if options.src_front_center:
         # Place source in ``ideal position'' with respect to microphones.
-        src_pos = get_front_center_pose(mike_pos, center_dist=1.)
+        if options.fac_dist < .1:
+            print "Warning: distance from array for ``front-and-center'' source\nposition is less than 10 cm."
+        src_pos = get_front_center_pose(mike_pos, center_dist=options.fac_dist)
         print "Source has fixed pose: (%.4f, %.4f, %.4f, %.4f, %.4f)" % tuple(src_pos)
     else:
         try:
@@ -265,7 +283,7 @@ you would enter 2,3.4,-1,.3,-1.1
     src_start_ind = int(num_samples/2)
     src_duration = .01 # 10 ms 
     t = np.arange(0, src_duration, sim_bsaf.sample_period)
-    x = 2000.*np.sin(2*np.pi*t*options.src_freq*1e3)
+    x = options.src_level*np.sin(2*np.pi*t*options.src_freq*1e3)
     
     # N.B., we assume end-trigger (i.e. time at trigger is 0)
     print "Starting emission at time %f s" % (sim_bsaf.sample_period*(src_start_ind-num_samples+1))
