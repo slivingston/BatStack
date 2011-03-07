@@ -79,7 +79,14 @@ RADIANCE_GLOBAL.spd_sound = 343; % m/s (note that this is related to temperature
 
 % ...and now mostly fields internal to this Radiance session
 RADIANCE_GLOBAL.handles = handles; % It is easier to deal with if we carry a copy around in RADIANCE_GLOBAL.
-RADIANCE_GLOBAL.def_dir = '.';
+
+if ispref('radiance','def_dir') && ...
+    exist(getpref('radiance','def_dir'),'dir')
+  RADIANCE_GLOBAL.def_dir=getpref('radiance','def_dir');
+else
+  RADIANCE_GLOBAL.def_dir='.';
+end
+
 RADIANCE_GLOBAL.buffer_len = 10240;
 RADIANCE_GLOBAL.current_time = nan; % no trial loaded yet
 RADIANCE_GLOBAL.current_chan_group = 1; % default to first mic group, i.e. channels 1 through 16.
@@ -658,12 +665,25 @@ function set_def_paths_Callback(hObject, eventdata, handles)
 global RADIANCE_GLOBAL;
 msg = 'Select default directory for finding stuff.';
 fprintf( '\n%s\n', msg );
-req_path = uigetdir( '.', msg );
+
+%grabbing any previous stored def dir
+if ispref('radiance','def_dir') && ...
+    exist(getpref('radiance','def_dir'),'dir')
+  STARTDIR=getpref('radiance','def_dir');
+else
+  STARTDIR='.';
+end
+
+req_path = uigetdir(STARTDIR, msg );
+
 if isequal(req_path,0)
     return % User hit Cancel button; ignore.
 end
 RADIANCE_GLOBAL.def_dir = req_path;
 RADIANCE_GLOBAL.last_saved_dir = RADIANCE_GLOBAL.def_dir;
+
+%storing the def dir as a pref
+setpref('radiance','def_dir',req_path);
 
 
 % --- Executes on button press in cell11.

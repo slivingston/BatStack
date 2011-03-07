@@ -15,3 +15,6 @@ end
 addpath([root_path '/src/Radiance']);
 addpath([root_path '/src/analysis']);
 addpath([root_path '/src/analysis/gain_calib']);
+
+%saves the current MATLAB search path for use in a future session
+savepath;
