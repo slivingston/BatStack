@@ -22,7 +22,7 @@ function varargout = radiance(varargin)
 
 % Edit the above text to modify the response to help radiance
 
-% Last Modified by GUIDE v2.5 15-Feb-2011 01:47:13
+% Last Modified by GUIDE v2.5 07-Mar-2011 12:25:05
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1662,12 +1662,11 @@ ylabel( 'Frequency (kHz)' );
 RADIANCE_GLOBAL.current_popped_chan = ch_num;
 RADIANCE_GLOBAL.pop_ax_h = ax_h;
 
+if get(RADIANCE_GLOBAL.handles.mark_immed,'Value')==1
+  mark_action;
+end
 
-% --- Executes on button press in mark_button.
-function mark_button_Callback(hObject, eventdata, handles)
-% hObject    handle to mark_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function mark_action
 global RADIANCE_GLOBAL;
 if isnan(RADIANCE_GLOBAL.current_popped_chan)
     return
@@ -1705,6 +1704,14 @@ RADIANCE_GLOBAL.F_stop( RADIANCE_GLOBAL.current_popped_chan, RADIANCE_GLOBAL.cur
 RADIANCE_GLOBAL.current_popped_chan = nan;
 close(get(RADIANCE_GLOBAL.pop_ax_h,'Parent'));
 update_plots;
+
+
+% --- Executes on button press in mark_button.
+function mark_button_Callback(hObject, eventdata, handles)
+% hObject    handle to mark_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+mark_action;
 
 
 function current_voc_box_Callback(hObject, eventdata, handles)
@@ -2243,3 +2250,12 @@ function spectrogram_min_box_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in mark_immed.
+function mark_immed_Callback(hObject, eventdata, handles)
+% hObject    handle to mark_immed (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of mark_immed
