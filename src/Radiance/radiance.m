@@ -1594,13 +1594,14 @@ end
 
 function popout_gridcell( row_ind, col_ind )
 global RADIANCE_GLOBAL;
-if (RADIANCE_GLOBAL.current_chan_group-1)*16 + (row_ind-1)*4+col_ind > RADIANCE_GLOBAL.num_mics
+ch_offset = (RADIANCE_GLOBAL.current_chan_group-1)*16;
+if ch_offset + (row_ind-1)*4+col_ind > RADIANCE_GLOBAL.num_mics
     return % Ignore empty clicks (such are the times we live in).
 end
 if ~isnan(RADIANCE_GLOBAL.current_popped_chan)
     try close(get(RADIANCE_GLOBAL.pop_ax_h,'Parent')), catch; end % Attempt to close previous figure, if visible
 end
-ch_num = (RADIANCE_GLOBAL.current_chan_group-1)*16 + (row_ind-1)*4+col_ind;
+ch_num = ch_offset + (row_ind-1)*4+col_ind;
 intv = [0 0];
 sig_max_ind = size(RADIANCE_GLOBAL.F,1);
 intv(1) = max(1,floor((RADIANCE_GLOBAL.local_times(ch_num) - RADIANCE_GLOBAL.t(1)) / RADIANCE_GLOBAL.samp_period));
@@ -1615,8 +1616,6 @@ end
 if RADIANCE_GLOBAL.plot_type == 2 % FFT (magnitude) spectrum
     fig_h = figure;
     ax_h = axes;
-    %X = fft( RADIANCE_GLOBAL.F(intv(1):intv(2),ch_num) - mean(RADIANCE_GLOBAL.F(intv(1):intv(2),ch_num)) );
-    %f = 1/(2*RADIANCE_GLOBAL.samp_period)*linspace(0,1,length(X)/2+1);
     [X_comp, f, H] = apptrans( RADIANCE_GLOBAL.samp_period, RADIANCE_GLOBAL.F(intv(1):intv(2),ch_num) - mean(RADIANCE_GLOBAL.F(intv(1):intv(2),ch_num)), RADIANCE_GLOBAL.G(:,[1 ch_num+1]) );
     plot( ax_h, f/1e3, X_comp, 'b.-' );
     xlim( ax_h, [10 130] );
@@ -1637,8 +1636,6 @@ elseif RADIANCE_GLOBAL.plot_type == 3 % voc FFT (magnitude) spectrum
         intv(2) = sig_max_ind;
     end
 
-    %X = fft( RADIANCE_GLOBAL.F(intv(1):intv(2),ch_num) - mean(RADIANCE_GLOBAL.F(intv(1):intv(2),ch_num)) );
-    %f = 1/(2*RADIANCE_GLOBAL.samp_period)*linspace(0,1,floor(length(X)/2)+1);
     [X_comp, f, H] = apptrans( RADIANCE_GLOBAL.samp_period, RADIANCE_GLOBAL.F(intv(1):intv(2),ch_num) - mean(RADIANCE_GLOBAL.F(intv(1):intv(2),ch_num)), RADIANCE_GLOBAL.G(:,[1 ch_num+1]) );
     
     plot( ax_h, f/1e3, X_comp, 'b.-' );
@@ -1658,6 +1655,29 @@ imagesc(Tim+RADIANCE_GLOBAL.t(intv(1)), Freq/1e3, 10*log10(abs(Pwr)), 'Parent', 
 set(ax_h, 'YDir', 'normal');
 axis( ax_h, 'tight' );
 caxis( ax_h, [RADIANCE_GLOBAL.spect_min, RADIANCE_GLOBAL.spect_max] );
+
+% If this channel has a marking for the current vocalisation and the
+% viewing window is within appropriate range, then mark start time,
+% freq and stop time, freq.
+if ~isnan(RADIANCE_GLOBAL.T_start( ch_num, RADIANCE_GLOBAL.current_voc ))
+    hold(ax_h, 'on');
+    if RADIANCE_GLOBAL.T_start(ch_num, RADIANCE_GLOBAL.current_voc) > min(Tim)+RADIANCE_GLOBAL.t(intv(1)) ...
+       && RADIANCE_GLOBAL.T_start(ch_num, RADIANCE_GLOBAL.current_voc) < max(Tim)+RADIANCE_GLOBAL.t(intv(1)) ...
+       && RADIANCE_GLOBAL.F_start(ch_num, RADIANCE_GLOBAL.current_voc) > min(Freq) ...
+       && RADIANCE_GLOBAL.F_start(ch_num, RADIANCE_GLOBAL.current_voc) < max(Freq)
+        plot(ax_h, RADIANCE_GLOBAL.T_start(ch_num, RADIANCE_GLOBAL.current_voc), ...
+             RADIANCE_GLOBAL.F_start(ch_num, RADIANCE_GLOBAL.current_voc)/1e3, 'k.', 'linewidth', 2)
+    end
+
+    if RADIANCE_GLOBAL.T_stop( ch_num, RADIANCE_GLOBAL.current_voc ) > min(Tim)+RADIANCE_GLOBAL.t(intv(1)) ...
+       && RADIANCE_GLOBAL.T_stop( ch_num, RADIANCE_GLOBAL.current_voc ) < max(Tim)+RADIANCE_GLOBAL.t(intv(1)) ...
+       && RADIANCE_GLOBAL.F_stop( ch_num, RADIANCE_GLOBAL.current_voc ) > min(Freq) ...
+       && RADIANCE_GLOBAL.F_stop( ch_num, RADIANCE_GLOBAL.current_voc ) < max(Freq)
+        plot(ax_h, RADIANCE_GLOBAL.T_stop(ch_num, RADIANCE_GLOBAL.current_voc), ...
+             RADIANCE_GLOBAL.F_stop(ch_num, RADIANCE_GLOBAL.current_voc)/1e3, 'k.', 'linewidth', 2)
+    end
+end
+
 title( sprintf('channel %d',ch_num) );
 xlabel( 'Time (s)' );
 ylabel( 'Frequency (kHz)' );
