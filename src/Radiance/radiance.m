@@ -22,7 +22,7 @@ function varargout = radiance(varargin)
 
 % Edit the above text to modify the response to help radiance
 
-% Last Modified by GUIDE v2.5 07-Mar-2011 12:25:05
+% Last Modified by GUIDE v2.5 18-Mar-2011 14:58:12
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -104,6 +104,9 @@ RADIANCE_GLOBAL.last_saved_filename = '';
 RADIANCE_GLOBAL.detail_chan_time_lock = 0; % Regarding forcing detailed channel view to match corresponding channel in signal grid (i.e. its "local time").
 RADIANCE_GLOBAL.spect_min = -100;
 RADIANCE_GLOBAL.spect_max = -20;
+RADIANCE_GLOBAL.spect_winsize = 128;
+RADIANCE_GLOBAL.spect_noverlap = 120;
+RADIANCE_GLOBAL.spect_nfft = 256;
 
 % UIWAIT makes radiance wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -297,6 +300,9 @@ RADIANCE_GLOBAL.beam_hi_freq = 42e3; % Hz
 RADIANCE_GLOBAL.detail_chan_time_lock = 0;
 RADIANCE_GLOBAL.spect_min = -100;
 RADIANCE_GLOBAL.spect_max = -20;
+RADIANCE_GLOBAL.spect_winsize = 128;
+RADIANCE_GLOBAL.spect_noverlap = 120;
+RADIANCE_GLOBAL.spect_nfft = 256;
 
 % Refresh relevant GUI widgets
 update_button_grid(1);
@@ -369,7 +375,7 @@ function credits_box_Callback(hObject, eventdata, handles)
 % hObject    handle to credits_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-msgbox(sprintf('Scott Livingston  <slivingston@caltech.edu>\nAuditory Neuroethology Lab (or the "Batlab")\nU. Maryland, College Park\n(c) 2009-2011'),'Radiance, software for wideband microphone array analysis','modal');
+msgbox(sprintf('Scott Livingston  <slivingston@caltech.edu>\nAuditory Neuroethology Lab (or the "Batlab")\nU. Maryland, College Park\n(c) 2009-2011\n\nwith contributions from:\nBen Falk'),'Radiance, software for wideband microphone array analysis','modal');
 
 
 % --------------------------------------------------------------------
@@ -546,6 +552,9 @@ RADIANCE_GLOBAL.current_voc = 1;
 RADIANCE_GLOBAL.detail_chan_time_lock = 0;
 RADIANCE_GLOBAL.spect_min = -100;
 RADIANCE_GLOBAL.spect_max = -20;
+RADIANCE_GLOBAL.spect_winsize = 128;
+RADIANCE_GLOBAL.spect_noverlap = 120;
+RADIANCE_GLOBAL.spect_nfft = 256;
 
 % Refresh relevant GUI widgets
 update_button_grid(1);
@@ -554,6 +563,8 @@ set(RADIANCE_GLOBAL.handles.time_box, 'String', num2str( RADIANCE_GLOBAL.current
 set(RADIANCE_GLOBAL.handles.vidframe_box, 'String', num2str( floor(RADIANCE_GLOBAL.current_time*RADIANCE_GLOBAL.vid_fps) ));
 set(RADIANCE_GLOBAL.handles.t_window_size_box,'String', sprintf( '%.2f', RADIANCE_GLOBAL.buffer_len * RADIANCE_GLOBAL.samp_period*1e3 ) );
 set(RADIANCE_GLOBAL.handles.current_voc_box,'String',num2str( RADIANCE_GLOBAL.current_voc ) );
+set(RADIANCE_GLOBAL.handles.spectrogram_min_box,'String', sprintf('%.3f',RADIANCE_GLOBAL.spect_min) );
+set(RADIANCE_GLOBAL.handles.spectrogram_max_box,'String', sprintf('%.3f',RADIANCE_GLOBAL.spect_max) );
 
 % Session info box
 dmarks = strfind( RADIANCE_GLOBAL.array_filename, '\' ); % Assuming we are on Windows >_<
@@ -1398,11 +1409,8 @@ elseif RADIANCE_GLOBAL.plot_type == 1 % Spectrogram
     ca = zeros(16,2); % Used to ensure color scaling is comparable across channels.
     for k = 1:min(16,RADIANCE_GLOBAL.num_mics-ch_offset)
         [S,Freq,Tim,Pwr] = spectrogram( RADIANCE_GLOBAL.F(intv(k,1):intv(k,2),ch_offset+k) - mean(RADIANCE_GLOBAL.F(intv(k,1):intv(k,2),ch_offset+k)), ...
-                                        128, 120, 256, 1/RADIANCE_GLOBAL.samp_period );
-%        surf( RADIANCE_GLOBAL.handles.grid_axes(k), ...
-%              Tim+RADIANCE_GLOBAL.t(intv(k,1)), Freq/1e3, ...
-%              10*log10(abs(Pwr)), 'edgecolor', 'none' );
-%        view( RADIANCE_GLOBAL.handles.grid_axes(k), 0, 90 );
+                                        RADIANCE_GLOBAL.spect_winsize, RADIANCE_GLOBAL.spect_noverlap, RADIANCE_GLOBAL.spect_nfft, ...
+                                        1/RADIANCE_GLOBAL.samp_period );
         imagesc(Tim+RADIANCE_GLOBAL.t(intv(1)), Freq/1e3, 10*log10(abs(Pwr)), ...
                 'Parent', RADIANCE_GLOBAL.handles.grid_axes(k));
         set(RADIANCE_GLOBAL.handles.grid_axes(k), 'YDir', 'normal');
@@ -1650,7 +1658,8 @@ fig_h = figure;
 ax_h = axes;
 
 [S,Freq,Tim,Pwr] = spectrogram( RADIANCE_GLOBAL.F(intv(1):intv(2),ch_num) - mean(RADIANCE_GLOBAL.F(intv(1):intv(2),ch_num)), ...
-                                128, 120, 256, 1/RADIANCE_GLOBAL.samp_period );
+                                RADIANCE_GLOBAL.spect_winsize, RADIANCE_GLOBAL.spect_noverlap, RADIANCE_GLOBAL.spect_nfft, ...
+                                1/RADIANCE_GLOBAL.samp_period );
 imagesc(Tim+RADIANCE_GLOBAL.t(intv(1)), Freq/1e3, 10*log10(abs(Pwr)), 'Parent', ax_h);
 set(ax_h, 'YDir', 'normal');
 axis( ax_h, 'tight' );
@@ -2259,6 +2268,38 @@ if isempty(requested_min) || requested_min > RADIANCE_GLOBAL.spect_max
 end
 RADIANCE_GLOBAL.spect_min = requested_min;
 return
+
+
+function set_spect_params_Callback(hObject, eventdata, handles)
+global RADIANCE_GLOBAL;
+if isempty(RADIANCE_GLOBAL.array_filename)
+    fprintf('No session active. Ignoring request.\n');
+    return
+end
+
+answer = inputdlg({'Window width:', 'NOVERLAP:', 'NFFT:'}, 'Spectrogram parameters', 1, ...
+                  {num2str(RADIANCE_GLOBAL.spect_winsize), ...
+                   num2str(RADIANCE_GLOBAL.spect_noverlap), ...
+                   num2str(RADIANCE_GLOBAL.spect_nfft)});
+if isempty(answer)
+    return % User hit cancel; do nothing.
+end
+
+% Sanity-checks
+new_winsize = str2double(answer{1});
+new_noverlap = str2double(answer{2});
+new_nfft = str2double(answer{3});
+if new_winsize <= 0 || new_noverlap <= 0 || new_nfft <= 0 ...
+   || new_winsize-floor(new_winsize) ~= 0 || new_noverlap-floor(new_noverlap) ~= 0 || new_nfft-floor(new_nfft) ~= 0 ...
+   || new_winsize < new_noverlap
+    fprintf( 'Warning: invalid spectrogram parameters. Ignoring.\n' );
+    return % It's all-or-nothing
+end
+
+RADIANCE_GLOBAL.spect_winsize = new_winsize;
+RADIANCE_GLOBAL.spect_noverlap = new_noverlap;
+RADIANCE_GLOBAL.spect_nfft = new_nfft;
+update_plots; % Refresh all plots, given new parameters.
 
 
 % --- Executes during object creation, after setting all properties.
