@@ -14,8 +14,12 @@ function upsources( new_paths, target_dir )
 % in radiance_analysed for which it makes sense to ``change the
 % path''. 
 %
+% If new_paths is a string, then it is regarded as the new path for
+% everything.
+%
+%
 % Scott Livingston
-% 7 Nov 2010
+% Nov 2010, Mar 2011.
 
 if nargin < 2
     target_dir = pwd;
@@ -25,6 +29,15 @@ D = dir([target_dir '/*_rad.mat']);
 if isempty(D)
     fprintf( 'No Radiance analysis files found in %s\n', target_dir );
     return
+end
+
+if ischar(new_paths)
+    new_path_str = new_paths;
+    clear new_paths
+    new_paths.d3_file = new_path_str;
+    new_paths.wamike_file = new_path_str;
+    new_paths.wagaincal_file = new_path_str;
+    new_paths.data_file = new_path_str;
 end
 
 for k = 1:length(D)
@@ -53,7 +66,7 @@ for k = 1:length(D)
         radiance_analysed.data_file = [new_paths.data_file '/' radiance_analysed.data_file(ind+1:end)];
     end
 
-    save([target_dir '/' D(k).name], 'radiance_analysed');
+    save('-V7', [target_dir '/' D(k).name], 'radiance_analysed');
 
 end
 
