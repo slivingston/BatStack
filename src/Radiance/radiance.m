@@ -307,7 +307,8 @@ set(RADIANCE_GLOBAL.handles.t_window_size_box,'String', sprintf( '%.2f', RADIANC
 set(RADIANCE_GLOBAL.handles.current_voc_box,'String',num2str( RADIANCE_GLOBAL.current_voc ) );
 set(RADIANCE_GLOBAL.handles.low_freq_box,'String', sprintf('%.3f',RADIANCE_GLOBAL.beam_lo_freq/1e3) );
 set(RADIANCE_GLOBAL.handles.high_freq_box,'String', sprintf('%.3f',RADIANCE_GLOBAL.beam_hi_freq/1e3) );
-
+set(RADIANCE_GLOBAL.handles.spectrogram_min_box,'String', sprintf('%.3f',RADIANCE_GLOBAL.spect_min) );
+set(RADIANCE_GLOBAL.handles.spectrogram_max_box,'String', sprintf('%.3f',RADIANCE_GLOBAL.spect_max) );
 
 % Session info box
 dmarks = strfind( RADIANCE_GLOBAL.array_filename, '\' ); % Assuming we are on Windows >_<
@@ -1398,10 +1399,13 @@ elseif RADIANCE_GLOBAL.plot_type == 1 % Spectrogram
     for k = 1:min(16,RADIANCE_GLOBAL.num_mics-ch_offset)
         [S,Freq,Tim,Pwr] = spectrogram( RADIANCE_GLOBAL.F(intv(k,1):intv(k,2),ch_offset+k) - mean(RADIANCE_GLOBAL.F(intv(k,1):intv(k,2),ch_offset+k)), ...
                                         128, 120, 256, 1/RADIANCE_GLOBAL.samp_period );
-        surf( RADIANCE_GLOBAL.handles.grid_axes(k), ...
-              Tim+RADIANCE_GLOBAL.t(intv(k,1)), Freq/1e3, ...
-              10*log10(abs(Pwr)), 'edgecolor', 'none' );
-        view( RADIANCE_GLOBAL.handles.grid_axes(k), 0, 90 );
+%        surf( RADIANCE_GLOBAL.handles.grid_axes(k), ...
+%              Tim+RADIANCE_GLOBAL.t(intv(k,1)), Freq/1e3, ...
+%              10*log10(abs(Pwr)), 'edgecolor', 'none' );
+%        view( RADIANCE_GLOBAL.handles.grid_axes(k), 0, 90 );
+        imagesc(Tim+RADIANCE_GLOBAL.t(intv(1)), Freq/1e3, 10*log10(abs(Pwr)), ...
+                'Parent', RADIANCE_GLOBAL.handles.grid_axes(k));
+        set(RADIANCE_GLOBAL.handles.grid_axes(k), 'YDir', 'normal');
         axis( RADIANCE_GLOBAL.handles.grid_axes(k), 'tight' );
         ca(k,:) = caxis( RADIANCE_GLOBAL.handles.grid_axes(k) );
         set( RADIANCE_GLOBAL.handles.grid_axes(k),'xtick', [] );
@@ -1650,10 +1654,8 @@ ax_h = axes;
 
 [S,Freq,Tim,Pwr] = spectrogram( RADIANCE_GLOBAL.F(intv(1):intv(2),ch_num) - mean(RADIANCE_GLOBAL.F(intv(1):intv(2),ch_num)), ...
                                 128, 120, 256, 1/RADIANCE_GLOBAL.samp_period );
-surf( ax_h, ...
-      Tim+RADIANCE_GLOBAL.t(intv(1)), Freq/1e3, ...
-      10*log10(abs(Pwr)), 'edgecolor', 'none' );
-view( ax_h, 0, 90 );
+imagesc(Tim+RADIANCE_GLOBAL.t(intv(1)), Freq/1e3, 10*log10(abs(Pwr)), 'Parent', ax_h);
+set(ax_h, 'YDir', 'normal');
 axis( ax_h, 'tight' );
 caxis( ax_h, [RADIANCE_GLOBAL.spect_min, RADIANCE_GLOBAL.spect_max] );
 title( sprintf('channel %d',ch_num) );
