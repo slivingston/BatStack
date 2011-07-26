@@ -66,14 +66,14 @@ rect = ones(5,1);
 for k = 1:length(I)
     
     % Determine indices range to consider, given voc start and stop times
-    intv = [min(find(t>= T_start(I(k),voc_num))) max(find(t<= T_stop(I(k),voc_num)))];
+    intv = [find(t>= T_start(I(k),voc_num), 1 ) find(t<= T_stop(I(k),voc_num), 1, 'last' )];
     
     % Core
+    tmp_F = filtfilt( b,a, F(:,I(k)) );
+    tmp_F = tmp_F(intv(1):intv(2));
     if amode == 0 % RMS
-        tmp_F = filtfilt( b,a, F(intv(1):intv(2),I(k)) );
         sig_ext(k) = sqrt(mean( tmp_F.^2 ));
     else % amode == 1 % peak
-        tmp_F = filtfilt( b,a, F(intv(1):intv(2),I(k)) );
         tmp_F = conv(abs(tmp_F),rect);
         tmp_F = sgolayfilt( tmp_F, 3, 23 ); % Order and frame length selected from default values used by Sunshine, as of 28 June 2010.
         sig_ext(k) = max(tmp_F); % Use peak
