@@ -353,7 +353,6 @@ BEAMVIZ_GLOBAL.az = 322.5;
 BEAMVIZ_GLOBAL.el = 30;
 BEAMVIZ_GLOBAL.min_freq = 10e3;
 BEAMVIZ_GLOBAL.max_freq = 130e3;
-BEAMVIZ_GLOBAL.current_voc = 1;
 BEAMVIZ_GLOBAL.beam_lo_freq = 28e3; % in Hertz
 BEAMVIZ_GLOBAL.beam_hi_freq = 42e3;
 BEAMVIZ_GLOBAL.ignore_ch = []; % By default, do not mark any microphone channels for ignoring.
