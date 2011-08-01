@@ -1,5 +1,5 @@
-function [fenv, N] = freqenv( F, Ts, freq_divs, sweep_marks, t )
-%[fenv, N] = freqenv( F, Ts, freq_divs, sweep_marks, t )
+function [fenv, N, sweep_marks] = freqenv( F, Ts, freq_divs, sweep_marks, t )
+%[fenv, N, sweep_marks] = freqenv( F, Ts, freq_divs, sweep_marks, t )
 % 
 % F is as generated in most other BatStack-related m-scripts, but in
 % particular, loadgainrec.m.
@@ -32,6 +32,11 @@ function [fenv, N] = freqenv( F, Ts, freq_divs, sweep_marks, t )
 % It is the vector of times with respect to which time intervals in
 % sweep_marks are given.  More explicitly, t is used to determine
 % which indices in F the times in sweep_marks correspond to.
+%
+% For any channels *not* defined in the given sweep_marks (or if
+% sweep_marks is not given at all), auto-marking is used and the
+% resulting rise/fall times are appended to sweep_marks.  The result
+% is sorted (in order of increasing channel number) and returned.
 %
 % N is a column vector of length equal to the number of microphone
 % channels. Each element contains the number of gain calibration
@@ -80,28 +85,51 @@ for k = 1:length(sweep_marks)
     end
 end
 
+% Buffer larger sweep_marks, preparing for expanding empty entries
+% with results of auto-marking.
+sweep_marks_orig = sweep_marks;
+sweep_marks = cell(num_chans,1);
+for k = 1:num_chans
+    if ~isnan(sweep_mark_map(k))
+        sweep_marks{k} = sweep_marks_orig{sweep_mark_map(k)};
+    end
+end
+
+% At this point, sweep_marks is a cell array with length equal to the
+% number of channels and has non-empty elements only where hand-marked
+% times were given in the original (given) sweep_marks, in order.  "In
+% order" means, e.g., if rise/fall markings were given for channel 11,
+% then now sweep_marks{11} contains the corresponding indices,
+% regardless of in which element in the original cell array these
+% appeared.
+
 % Do it!
 for k = 1:num_chans
 
     % Look for channel in sweep_marks; if there, use it; else, try
     % auto-marking.
-    if ~isnan(sweep_mark_map(k))
-        if length(sweep_marks{sweep_mark_map(k)}) == 1
+    if ~isempty(sweep_marks{k})
+        if length(sweep_marks{k}) == 1
             fprintf( 'Warning: no gain cal sweeps specified for ch. %d.\n', k );
             continue
         end
-        if length(sweep_marks{sweep_mark_map(k)}) < 3
+        if (length(sweep_marks{k})-1)/2 < 3
             fprintf( 'Warning: insufficiently many gain cal sweeps specified for ch. %d.\n', k );
             continue
         end
-        ch = struct('rise_pts', sweep_marks{sweep_mark_map(k)}(2:2:end), ...
-                    'fall_pts', sweep_marks{sweep_mark_map(k)}(3:2:end));
+        ch = struct('rise_pts', sweep_marks{k}(2:2:end), ...
+                    'fall_pts', sweep_marks{k}(3:2:end));
     else
 	[ch] = getsweeps( F(:,k) );
 	if isempty(ch) || isempty(ch.rise_pts)
+            sweep_marks{k} = [k];  % Indicate no sweeps found
 	    fprintf( 'Warning: no gain cal sweeps found for ch. %d.\n', k );
 	    continue
 	end
+        sweep_marks{k} = [k, nan(1,length(ch.rise_pts))];
+        for sweep_index = 1:length(ch.rise_pts)
+            sweep_marks{k}((sweep_index*2):(sweep_index*2+1)) = [ch.rise_pts(sweep_index), ch.fall_pts(sweep_index)];
+        end
 	if length(ch.rise_pts) < 3
 	    fprintf( 'Warning: insufficiently many gain cal sweeps for ch. %d.\n', k );
 	    continue
@@ -124,3 +152,4 @@ for k = 1:num_chans
     end
 
 end
+
