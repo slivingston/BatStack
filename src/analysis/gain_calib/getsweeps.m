@@ -26,7 +26,7 @@ end
 % Remove the DC offset
 x = x - mean(x);
 
-% BPF: Butterworth, 2nd order, 10 kHz - 130 kHz
+% BPF: Butterworth, 4th order, 10 kHz - 130 kHz
 [b,a] = butter( 2, [10e3 130e3].*Ts*2 );
 x = filter( b, a, x );
 

@@ -7,13 +7,9 @@
 % BatStack technical documentation
 %
 %
-% Scott Livingston  <slivingston@caltech.edu>
-% Apr-Nov 2010.
+% Scott C. Livingston  <slivingston@caltech.edu>
+% Apr 2010, 2011.
 
-
-
-
-\usepackage{hyperref}
 
 
 \title{BatStack\\ :: reference manual ::}
@@ -35,7 +31,16 @@
 \graphics default
 \paperfontsize default
 \spacing single
-\use_hyperref false
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
 \papersize letterpaper
 \use_geometry false
 \use_amsmath 1
@@ -72,7 +77,8 @@ draft
 \end_layout
 
 \begin_layout Author
-Scott Livingston
+Scott C.
+ Livingston
 \begin_inset Foot
 status collapsed
 
@@ -186,8 +192,8 @@ signals and systems.
 \begin_layout Standard
 
 \shape italic
-Please notify me of any errors --no matter how small-- and of general criticism
- on this work.
+Please notify me of any errors ---no matter how small--- and of general
+ criticism on this work.
 
 \shape default
  I would in particular like to know what is unclear or ambiguous, and which
@@ -537,6 +543,25 @@ And I will make this precise later.
 ion.
 \end_layout
 
+\begin_layout Standard
+The main project repository is available at 
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://github.com/slivingston/BatStack
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Overview and motivation of system
 \end_layout
@@ -589,7 +614,7 @@ bats
  throughout space, where they act as samplers of the sound field.
  With proper synchronization across channels, recordings then provide a
  rich view of the bat's vocalizations: intensity and spectral information
- over space, which --when traced back to the source's perspective-- reveals
+ over space, which ---when traced back to the source's perspective--- reveals
  features of the sonar beam structure.
 \end_layout
 
@@ -1511,7 +1536,7 @@ Debugging later can be hell, so make note of potential weak points during
 \begin_layout Itemize
 The most expensive single parts of the Array hardware are the microphones
  and the SRAM chips (or rather, the combined market value of a populated
- memory board --4 to 8 SRAM chips-- is high).
+ memory board ---4 to 8 SRAM chips--- is high).
  Keep this in mind during construction.
 \end_layout
 
@@ -2152,7 +2177,7 @@ status collapsed
 
 \begin_layout Plain Layout
 This is a single-supply design; hence, our signal of interest rides on a
- DC offset voltage --sometimes called the 
+ DC offset voltage ---sometimes called the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -2160,7 +2185,7 @@ virtual ground
 \begin_inset Quotes erd
 \end_inset
 
--- midway between the power rails.
+--- midway between the power rails.
 \end_layout
 
 \end_inset
@@ -2576,7 +2601,7 @@ zoom in
 \end_inset
 
  to view detail).
- An example complete MCU board --sans dsPIC33F chip breakout
+ An example complete MCU board ---sans dsPIC33F chip breakout
 \begin_inset Foot
 status collapsed
 
@@ -2622,7 +2647,7 @@ reference "mikropic:fig"
 
 \end_inset
 
--- is shown in Fig.
+--- is shown in Fig.
 \begin_inset space ~
 \end_inset
 
@@ -2813,8 +2838,8 @@ The example board is
 \shape italic
 minimally populated
 \shape default
-, in that only crucial components --aside from the red LED (power indicator),
- which is helpful but not necessary-- are present.
+, in that only crucial components ---aside from the red LED (power indicator),
+ which is helpful but not necessary--- are present.
 \end_layout
 
 \begin_layout Itemize
@@ -2891,12 +2916,12 @@ must be done before providing power to the assembled board
 The following only applies to some MCU boards.
 
 \series default
- We expect to trigger on a rising edge --or more accurately, a pulse from
+ We expect to trigger on a rising edge ---or more accurately, a pulse from
  a baseline of 0
 \begin_inset space ~
 \end_inset
 
-V-- and hence, the corresponding pin of the dsPIC33F chip should be pulled
+V--- and hence, the corresponding pin of the dsPIC33F chip should be pulled
  down.
  Recent MCU boards
 \begin_inset Foot
@@ -3162,7 +3187,7 @@ reference "construct:sec"
 
 \begin_layout Itemize
 Make a plan of attack.
- With surface mount work --more so than through-hole-- you will find it
+ With surface mount work ---more so than through-hole--- you will find it
  critical to solder some chips before others.
  You need plenty of space for reliable soldering, and this typically means
  bulky passives should be added later.
@@ -3723,8 +3748,8 @@ indeed, this is from stress-testing and should not really be used in practice.
 \end_inset
 
 V DC.
- With an appropriate connecter --i.e.
- one that matches the power jack on the MCU board-- you could use a battery,
+ With an appropriate connecter ---i.e.
+ one that matches the power jack on the MCU board--- you could use a battery,
  e.g.
  standard 9
 \begin_inset space ~
@@ -4248,8 +4273,8 @@ you know, as used for photography.
 the speaker playing the tone almost surely does not have a flat response.
 
 \shape default
- With this setup --and an oscilloscope attached to the amplifier output
- as described above-- it is possible to quickly vary frequency and (less
+ With this setup ---and an oscilloscope attached to the amplifier output
+ as described above--- it is possible to quickly vary frequency and (less
  reliably) intensity input and examine the frequency, magnitude, and noise
  or distortion of the amplifier output.
  The tripod may also be moved such that the angle of incidence between the
@@ -4315,7 +4340,7 @@ beamaxis
 \begin_inset Quotes erd
 \end_inset
 
- to be the axis --or angle of incidence-- at which peak intensity is achieved,
+ to be the axis ---or angle of incidence--- at which peak intensity is achieved,
  given a fixed radius from the source.
  This is not necessarily unique.
 \end_layout
@@ -4474,7 +4499,7 @@ k
 \end_layout
 
 \begin_layout Subsubsection
-Firmware Installation
+Firmware installation
 \end_layout
 
 \begin_layout Standard
@@ -5039,9 +5064,10 @@ high
 \end_inset
 
  the relative positions of the microphones.
- In this case, you only need know the absolute positions of at least three
- microphones for any particular experimental recording in order to obtain
- (by translation and rotation) the absolute positions of all the microphones.
+ In this case, you only need to know the absolute positions of at least
+ three microphones for any particular experimental recording in order to
+ obtain (by translation and rotation) the absolute positions of all the
+ microphones.
  This relative-to-absolute approach may be the only reasonable option if
  your other measurement equipment requires frequent coordinate frame changes
 \begin_inset Foot
@@ -5058,25 +5084,7 @@ which is often the case in modern, high precision video tracking systems.
 
 \begin_layout Standard
 Alternatively, you could only track absolute positions of all microphones
- and never formally obtain relative measurements
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-though, of course, relative measurements are immediate from any given 
-\begin_inset Quotes eld
-\end_inset
-
-absolute
-\begin_inset Quotes erd
-\end_inset
-
- measurements.
-\end_layout
-
-\end_inset
-
-.
+ and never formally obtain relative measurements.
 \end_layout
 
 \begin_layout Standard
@@ -5146,7 +5154,7 @@ please be careful
 status collapsed
 
 \begin_layout Plain Layout
-This does not make them functionally inferior --indeed, often the opposite--
+This does not make them functionally inferior ---indeed, often the opposite---
  but rather, a fresh reminder of the difference between 
 \begin_inset Quotes eld
 \end_inset
@@ -5339,7 +5347,7 @@ card of each Stack in your rig, there should be one
 \begin_inset space ~
 \end_inset
 
-May 2010, hence my directory contains
+May 2010; hence my directory contains
 \begin_inset ERT
 status open
 
@@ -5472,7 +5480,7 @@ src/util/dumpsd
 \end_inset
 
  in the BatStack sourcetree.
- Note that I am calibration 16 channels, hence 16 binary files.
+ Note that I am calibrating 16 channels, hence 16 binary files.
 \end_layout
 
 \begin_layout Standard
@@ -5747,8 +5755,8 @@ trial
 \begin_layout Standard
 In the terminal snapshot below, I first load my channel map from a local
  file.
- Then given the order in which I measured microphone channels --and other
- specifics of my setup-- my function calls are thus
+ Then given the order in which I measured microphone channels ---and other
+ specifics of my setup--- my function calls are thus
 \begin_inset ERT
 status collapsed
 
@@ -5911,10 +5919,7 @@ gain compensation matrix.
 \begin_inset Quotes erd
 \end_inset
 
- In this example, the corresponding steps ar
-e
-\lang english
-
+ In this example, the corresponding steps are
 \begin_inset ERT
 status open
 
@@ -6239,11 +6244,11 @@ N.B.,
 \series default
  because a simpler interface has not been written yet, the notes here pertain
  to doing things manually.
- Decent comfort at the UNIX command prompt (
+ Decent comfort at the UNIX terminal (
 \begin_inset Quotes eld
 \end_inset
 
-terminal
+command prompt
 \begin_inset Quotes erd
 \end_inset
 
@@ -6453,234 +6458,6 @@ not
 \shape default
  include the null terminator, which typically is not stored in the data
  files.) 
-\end_layout
-
-\begin_layout Subsection
-Version 1 (and God said\SpecialChar \ldots{}
-)
-\end_layout
-
-\begin_layout Standard
-\noindent
-
-\series bold
-Comments.
-
-\series default
- This is the first version and is being phased out -- do 
-\shape italic
-not
-\shape default
- use it for new Array data files.
- 
-\end_layout
-
-\begin_layout Itemize
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-[
-\end_layout
-
-\end_inset
-
-0
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-]
-\end_layout
-
-\end_inset
-
- (u8) version number 
-\end_layout
-
-\begin_layout Itemize
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-[
-\end_layout
-
-\end_inset
-
-1-2
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-]
-\end_layout
-
-\end_inset
-
- (u16) recording date 
-\end_layout
-
-\begin_layout Itemize
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-[
-\end_layout
-
-\end_inset
-
-3
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-]
-\end_layout
-
-\end_inset
-
- (u8) trial number 
-\end_layout
-
-\begin_layout Itemize
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-[
-\end_layout
-
-\end_inset
-
-4
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-]
-\end_layout
-
-\end_inset
-
- (u8) number of mic channels 
-\end_layout
-
-\begin_layout Itemize
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-[
-\end_layout
-
-\end_inset
-
-5-6
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-]
-\end_layout
-
-\end_inset
-
- (u16) sample period (in 10 ns units) 
-\end_layout
-
-\begin_layout Itemize
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-[
-\end_layout
-
-\end_inset
-
-7-10
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-]
-\end_layout
-
-\end_inset
-
- (u32) post-trigger samples (i.e., number of samples (per channel) after the
- trigger) 
-\end_layout
-
-\begin_layout Itemize
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-[
-\end_layout
-
-\end_inset
-
-11-138
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-]
-\end_layout
-
-\end_inset
-
- (c128) other notes (e.g., bat ID, room temperature and humidity), as a non-null
- terminated ASCII string; unused elements should be set to 
-\begin_inset Formula $0$
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Itemize
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-[
-\end_layout
-
-\end_inset
-
-139
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-]
-\end_layout
-
-\end_inset
-
- (u16, iv) the actual array data, interleaved.
- 
 \end_layout
 
 \begin_layout Subsection
@@ -6959,6 +6736,234 @@ chan_len
 \end_inset
 
 2, and so on.
+ 
+\end_layout
+
+\begin_layout Subsection
+Version 1 (and God said\SpecialChar \ldots{}
+)
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\series bold
+Comments.
+
+\series default
+ This is the first version and is being phased out -- do 
+\shape italic
+not
+\shape default
+ use it for new Array data files.
+ 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+[
+\end_layout
+
+\end_inset
+
+0
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+]
+\end_layout
+
+\end_inset
+
+ (u8) version number 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+[
+\end_layout
+
+\end_inset
+
+1-2
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+]
+\end_layout
+
+\end_inset
+
+ (u16) recording date 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+[
+\end_layout
+
+\end_inset
+
+3
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+]
+\end_layout
+
+\end_inset
+
+ (u8) trial number 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+[
+\end_layout
+
+\end_inset
+
+4
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+]
+\end_layout
+
+\end_inset
+
+ (u8) number of mic channels 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+[
+\end_layout
+
+\end_inset
+
+5-6
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+]
+\end_layout
+
+\end_inset
+
+ (u16) sample period (in 10 ns units) 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+[
+\end_layout
+
+\end_inset
+
+7-10
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+]
+\end_layout
+
+\end_inset
+
+ (u32) post-trigger samples (i.e., number of samples (per channel) after the
+ trigger) 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+[
+\end_layout
+
+\end_inset
+
+11-138
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+]
+\end_layout
+
+\end_inset
+
+ (c128) other notes (e.g., bat ID, room temperature and humidity), as a non-null
+ terminated ASCII string; unused elements should be set to 
+\begin_inset Formula $0$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+[
+\end_layout
+
+\end_inset
+
+139
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+]
+\end_layout
+
+\end_inset
+
+ (u16, iv) the actual array data, interleaved.
  
 \end_layout
 
@@ -7432,7 +7437,7 @@ Data is stored as a Matlab MAT file, at least versions 6 and 7 should be
 \family typewriter
 radiance_analysed
 \family default
-, which has fields (type is matrix of doubles --as usual in Matlab-- unless
+, which has fields (type is matrix of doubles ---as usual in Matlab--- unless
  noted otherwise) as follows.
  Note that, no matter what the version, the analysis results structure must
  contain a field called 
@@ -7833,7 +7838,7 @@ Directory
 \end_layout
 
 \begin_layout Standard
-All circuit design --schematics and layout-- is performed in CadSoft EAGLE
+All circuit design ---schematics and layout--- is performed in CadSoft EAGLE
  5.x
 \begin_inset Foot
 status collapsed
@@ -7943,18 +7948,6 @@ release 2
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ampbrd2:fig"
-
-\end_inset
-
-.
- Circuit schematic in Fig.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "micamp_schem:fig"
 
 \end_inset
 
@@ -8109,6 +8102,205 @@ name "micamp_schem:fig"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Operation.
+
+\series default
+ The purpose of the amplifier is to condition and filter a signal obtained
+ from an electret microphone (Knowles FG-3629; cf.
+ Table
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "mic_parts:tbl"
+
+\end_inset
+
+) in preparation for recording by the BatStack microcontroller.
+ At the highest view, this happens in a sequence of buffers, gain steps
+ and highpass filters.
+ More explicitly (cf.
+ circuit schematic in Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "micamp_schem:fig"
+
+\end_inset
+
+ as well),
+\end_layout
+
+\begin_layout Enumerate
+Microphone provides voltage signal, riding on approximately 0.5
+\begin_inset space ~
+\end_inset
+
+V DC offset.
+\end_layout
+
+\begin_layout Enumerate
+A unity gain follower (i.e., op amp in buffer configuration) to improve output
+ impedance from microphone.
+\end_layout
+
+\begin_layout Enumerate
+Second order highpass filter with corner frequency of 10
+\begin_inset space ~
+\end_inset
+
+kHz.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+High gain stage
+\begin_inset Quotes erd
+\end_inset
+
+; standard non-inverting op amp set to provide 40
+\begin_inset space ~
+\end_inset
+
+dB (voltage) gain (100
+\begin_inset space ~
+\end_inset
+
+k
+\begin_inset Formula $\Omega$
+\end_inset
+
+/1
+\begin_inset space ~
+\end_inset
+
+k
+\begin_inset Formula $\Omega$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Enumerate
+Second order highpass filter with corner frequency of 125
+\begin_inset space ~
+\end_inset
+
+kHz (approx.).
+\end_layout
+
+\begin_layout Enumerate
+Unity gain follower to improve impedance.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Quotes eld
+\end_inset
+
+Configurable high gain stage
+\begin_inset Quotes erd
+\end_inset
+
+; similar to before, but 100
+\begin_inset space ~
+\end_inset
+
+k
+\begin_inset Formula $\Omega$
+\end_inset
+
+ trimpot permits setting from 0
+\begin_inset space ~
+\end_inset
+
+dB to 40
+\begin_inset space ~
+\end_inset
+
+dB.
+\end_layout
+
+\begin_layout Enumerate
+Final buffer at amplifier board output.
+\end_layout
+
+\begin_layout Standard
+Some explanation is in order.
+ 
+\series bold
+There is presently no antialiasing filter in the design.
+
+\series default
+ The original reasoning is that we are interested in signals with spectral
+ content up to about 125
+\begin_inset space ~
+\end_inset
+
+kHz, and thus no significant noise sources above that are expected.
+ Introducing an antialiasing filter incurs its own costs -- as the case
+ for any new components, and more so for active ones.
+ More careful empirical tests should be used to decide whether antialiasing
+ should be added.
+\end_layout
+
+\begin_layout Standard
+The purpose of the 10
+\begin_inset space ~
+\end_inset
+
+kHz highpass filter should be clear.
+ We use a second highpass filter with corner frequency at the upper end
+ of our band of interest to compensate for non-flat response of the Knowles
+ microphone.
+ Empirical tests indicate an approximate 40
+\begin_inset space ~
+\end_inset
+
+dB/dec roll-off between 10
+\begin_inset space ~
+\end_inset
+
+kHz and 100
+\begin_inset space ~
+\end_inset
+
+kHz.
+ The microphone is targeted at human audible ranges, hence this mediocre
+ ultrasonic behavior is not surprising.
+\end_layout
+
+\begin_layout Standard
+To facilitate operation from a single DC supply, the signal of interest
+ is carried on a 
+\begin_inset Quotes eld
+\end_inset
+
+virtual ground
+\begin_inset Quotes erd
+\end_inset
+
+ of 1.65
+\begin_inset space ~
+\end_inset
+
+V (i.e., 
+\begin_inset Formula $3.3/2=1.65$
+\end_inset
+
+), which is provided by a voltage divider and op amp buffer configuration
+ on each microphone amplifier board.
 \end_layout
 
 \begin_layout Subsection
@@ -8494,7 +8686,7 @@ on.
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -8537,16 +8729,13 @@ l cable socket, where cable shielding connects to ground.
 \end_inset
 
 
-\end_layout
-
-\begin_layout Plain Layout
 \begin_inset CommandInset label
 LatexCommand label
 name "gaincal_schem:fig"
 
 \end_inset
 
- 
+
 \end_layout
 
 \end_inset
@@ -8556,24 +8745,6 @@ name "gaincal_schem:fig"
 
 \begin_layout Subsection
 Bill of materials
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-% What to purchase, and where (recommended)
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -9945,11 +10116,11 @@ GND -- ground.
 \end_layout
 
 \begin_layout Standard
-The SD card SPI interface header --5
+The SD card SPI interface header ---5
 \begin_inset Formula $\times$
 \end_inset
 
-2 male header, 0.1" spacing-- on the left side of the board (in Fig.
+2 male header, 0.1" spacing--- on the left side of the board (in Fig.
 \begin_inset space ~
 \end_inset
 
@@ -10832,6 +11003,20 @@ N.B.,
  the source code files are fairly well commented.
  Until I get time to write up this section, please look directly in the
  code files for design notes and reasoning.
+ You might also peek at Sec.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "config:sec"
+
+\end_inset
+
+, where some notes on firmware configuration are provided\SpecialChar \ldots{}
+ as a temporary
+ solution till an easier frontend is written.
 \end_layout
 
 \begin_layout Subsection
@@ -11711,7 +11896,7 @@ for developing firmware
 dumpsd
 \family default
 ) expect a standard Unix (or GNU/Linux) environment.
- Porting to Windows may prove difficult, unless --and this is what I prefer--
+ Porting to Windows may prove difficult, unless ---and this is what I prefer---
  the various tools are rewritten in Python.
 \end_layout
 
@@ -12106,7 +12291,7 @@ Here is a laundry list.
 gendate.py
 \family default
 ).
- For others, calling the program with no arguments --when some are mandatory--
+ For others, calling the program with no arguments ---when some are mandatory---
  will cause a usage message to be printed (e.g., 
 \family typewriter
 dumpsd
