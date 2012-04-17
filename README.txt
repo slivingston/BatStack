@@ -7,8 +7,7 @@ Email contact by slivingston@caltech.edu
 
 
 This program, hardware and related project files are free and open
-source, distributed under the terms of the GNU Lesser General Public
-License (LGPL) as published by the Free Software Foundation. See the
+source, distributed under the terms of the BSD license. See the
 LICENSE.txt file for details.
 
 This program is distributed in the hope that it will be useful, but
